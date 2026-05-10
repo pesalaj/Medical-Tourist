@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Ceylon MediConnect | Overseas Patient Reservation System</title>
+  <!-- Google Fonts + Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- PayPal SDK (sandbox by default, replace client-id for production) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AUjpHWkOBpcPOVD3WtMLqq06t6Il1hWuzvKY5AEJMGp_Kb7TvNfXtwRQl9c91zSJsIDndwXlMvUnOv02&currency=USD"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f7f3;
+      color: #1a2e2a;
+      padding: 2rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* header */
+    .hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #006B4C, #009E6B);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .hero p {
+      color: #2d5a4a;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    /* main card layout */
+    .booking-card {
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 32, 20, 0.15);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 2rem;
+      padding: 2rem 2rem 1.5rem;
+    }
+
+    .form-section {
+      background: #FEFCF5;
+      padding: 1.2rem 1.5rem;
+      border-radius: 1.5rem;
+      border: 1px solid #e0ede6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .form-section h3 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      border-left: 5px solid #009E6B;
+      padding-left: 0.9rem;
+      color: #1C4E3F;
+    }
+
+    .input-group {
+      margin-bottom: 1.1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .input-group label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+      color: #2a5a4b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .input-group label i {
+      width: 20px;
+      color: #009E6B;
+    }
+    input, select, textarea {
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1.5px solid #dde8e2;
+      background: white;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #009E6B;
+      box-shadow: 0 0 0 3px rgba(0,158,107,0.2);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    .row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    hr {
+      margin: 1rem 0;
+      border: 0;
+      height: 1px;
+      background: linear-gradient(to right, #cfe6dd, transparent);
+    }
+
+    /* price summary */
+    .price-panel {
+      background: #EBF6F1;
+      border-radius: 1.5rem;
+      padding: 1.2rem 1.8rem;
+      margin: 0 2rem 1.5rem 2rem;
+      border: 1px solid #CBE3D9;
+    }
+    .price-breakdown {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+    .total-price {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #006B4C;
+      text-align: right;
+      border-top: 2px dashed #bdd9ce;
+      margin-top: 12px;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .paypal-button-container {
+      margin: 25px 2rem 2rem 2rem;
+      padding: 0 0 20px 0;
+    }
+    .alert-message {
+      margin: 0 2rem;
+      background: #fff1e0;
+      border-left: 5px solid #f4a261;
+      padding: 12px 18px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+    }
+    .confirmation-card {
+      background: #e9f7ef;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      margin: 0 2rem 2rem 2rem;
+      display: none;
+      border: 1px solid #b8dec9;
+    }
+    button, .mock-btn {
+      background: none;
+      border: none;
+    }
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #5f8377;
+    }
+    @media (max-width: 780px) {
+      .form-grid {
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .price-panel, .paypal-button-container, .alert-message, .confirmation-card {
+        margin-left: 1rem;
+        margin-right: 1rem;
+      }
+    }
+    .badge {
+      background: #FFF2DF;
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <h1><i class="fas fa-hands-helping"></i> Ceylon MediConnect</h1>
+    <p>Premium door-to-door medical care | Sri Lanka's top hospitals | All-inclusive patient journey</p>
+    <span class="badge"><i class="fas fa-shield-alt"></i> Secure online payment | 24/7 patient concierge</span>
+  </div>
+
+  <div class="booking-card">
+    <div class="form-grid" id="bookingFormArea">
+      <!-- LEFT COLUMN: PATIENT INFO + MEDICAL -->
+      <div class="form-section">
+        <h3><i class="fas fa-user-md"></i> Patient & Medical</h3>
+        <div class="input-group">
+          <label><i class="fas fa-user"></i> Full Name *</label>
+          <input type="text" id="fullName" placeholder="e.g., David Chen" required>
+        </div>
+        <div class="row-2col">
+          <div class="input-group"><label>Date of Birth *</label><input type="date" id="dob"></div>
+          <div class="input-group"><label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+        </div>
+        <div class="row-2col">
+          <div class="input-group"><label>Nationality</label><input type="text" id="nationality" placeholder="e.g., USA"></div>
+          <div class="input-group"><label>Passport No.</label><input type="text" id="passport"></div>
+        </div>
+        <div class="row-2col">
+          <div class="input-group"><label>Email *</label><input type="email" id="email" placeholder="patient@example.com"></div>
+          <div class="input-group"><label>Phone (WhatsApp)</label><input type="tel" id="phone" placeholder="+94XXXXXXXXX"></div>
+        </div>
+        <div class="input-group"><label><i class="fas fa-stethoscope"></i> Primary Diagnosis / Condition *</label><textarea id="diagnosis" placeholder="e.g., Cardiac surgery, Orthopedic, Oncology..."></textarea></div>
+        <div class="input-group"><label><i class="fas fa-pills"></i> Required Treatment / Procedure *</label><textarea id="treatmentReq" placeholder="Knee replacement, bypass surgery, dialysis, etc."></textarea></div>
+        <div class="input-group"><label>Medical history / Allergies</label><textarea id="medicalHistory" placeholder="Any allergies, chronic conditions, special notes"></textarea></div>
+      </div>
+
+      <!-- MIDDLE COLUMN: HOSPITAL & TRAVEL DETAILS -->
+      <div class="form-section">
+        <h3><i class="fas fa-hospital-user"></i> Hospital & Travel Plan</h3>
+        <div class="input-group"><label>Preferred Hospital in Sri Lanka *</label><select id="hospital">
+          <option value="Nawaloka Hospital">Nawaloka Hospital, Colombo</option>
+          <option value="Asiri Surgical Hospital">Asiri Surgical Hospital</option>
+          <option value="Lanka Hospitals">Lanka Hospitals (Durdans)</option>
+          <option value="Hemas Hospital">Hemas Hospital Wattala</option>
+          <option value="Ninewells Hospital">Ninewells Hospital, Kandana</option>
+        </select></div>
+        <div class="row-2col">
+          <div class="input-group"><label>Arrival Date *</label><input type="date" id="arrivalDate"></div>
+          <div class="input-group"><label>Departure Date *</label><input type="date" id="departureDate"></div>
+        </div>
+        <div class="input-group"><label>Number of companions (0-4)</label><input type="number" id="companions" min="0" max="4" value="1"></div>
+        <div class="input-group"><label>Doctor preference (optional)</label><input type="text" id="doctorPref" placeholder="Surgeon name / department"></div>
+        <div class="input-group"><label>Additional Medical notes</label><textarea id="extraNotes" placeholder="Wheelchair, interpreter, ICU requirement..."></textarea></div>
+        <hr>
+        <h4 style="margin: 5px 0 12px 0; font-size: 1rem;"><i class="fas fa-concierge-bell"></i> Door-to-door services (tick what you need)</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+          <label style="gap:5px"><input type="checkbox" id="chkFlight" checked> ✈️ Round-trip Air ticket</label>
+          <label><input type="checkbox" id="chkHotel" checked> 🏨 Hotel accommodation</label>
+          <label><input type="checkbox" id="chkTransfer" checked> 🚕 Airport-Hospital/Hotel transfer</label>
+          <label><input type="checkbox" id="chkLocalTransport" checked> 🚌 Daily transport to/from hospital</label>
+          <label><input type="checkbox" id="chkMealPlan" checked> 🍲 Meal plan (breakfast + dinner)</label>
+          <label><input type="checkbox" id="chkVisa" checked> 📄 Visa assistance & escort</label>
+        </div>
+        <div class="row-2col" style="margin-top: 14px;">
+          <div class="input-group"><label>Hotel preference</label><select id="hotelTier"><option value="standard">Standard ($70/night)</option><option value="deluxe" selected>Deluxe ($140/night)</option><option value="luxury">Luxury ($260/night)</option></select></div>
+          <div class="input-group"><label>Flight class</label><select id="flightClass"><option value="economy">Economy (+$600)</option><option value="business">Business (+$1350)</option></select></div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: CONTACT & EMERGENCY -->
+      <div class="form-section">
+        <h3><i class="fas fa-globe-asia"></i> Coordination & Emergency</h3>
+        <div class="input-group"><label>Emergency Contact Name & Relation</label><input type="text" id="emergencyContact" placeholder="Name / Relationship"></div>
+        <div class="input-group"><label>Emergency Phone</label><input type="text" id="emergencyPhone" placeholder="+ country code"></div>
+        <div class="input-group"><label>Special requirements (diet, wheelchair, oxygen)</label><textarea id="specialReq" placeholder="Any physical assistance or diet restrictions"></textarea></div>
+        <div class="input-group"><label>Preferred contact method</label><select id="contactMethod"><option>WhatsApp</option><option>Email</option><option>Phone Call</option></select></div>
+        <div class="input-group"><label>Any previous treatment in Sri Lanka?</label><select id="prevTreatment"><option>No</option><option>Yes (please specify in notes)</option></select></div>
+        <div class="alert-message" style="margin: 12px 0 0 0; background:#EFF9F5;">
+          <i class="fas fa-info-circle"></i> <strong>All-inclusive package:</strong> We arrange air ticket, hotel, food, transfers, hospital liaison, and return travel.
+        </div>
+      </div>
+    </div>
+
+    <!-- DYNAMIC PRICE PANEL -->
+    <div class="price-panel" id="pricePanel">
+      <div style="display:flex; justify-content:space-between;"><span><strong>💰 Your treatment journey cost</strong></span> <span id="stayNightsInfo"></span></div>
+      <div class="price-breakdown" id="priceDetail"></div>
+      <div class="total-price"><span>Total (USD)</span> <span id="totalPriceUSD">0.00</span></div>
+    </div>
+
+    <!-- PayPal button container + validation alerts -->
+    <div id="paypalAlert" class="alert-message" style="display: none;"><i class="fas fa-exclamation-triangle"></i> <span id="alertText">Please fill required fields and dates before payment.</span></div>
+    <div id="paypal-button-container" class="paypal-button-container"></div>
+    
+    <!-- Confirmation after success -->
+    <div id="confirmationBlock" class="confirmation-card">
+      <div style="display: flex; gap: 12px; align-items: center;"><i class="fas fa-check-circle" style="font-size: 2rem; color:#009E6B;"></i> <strong>✓ Payment Successful! Your reservation is reserved.</strong></div>
+      <div id="bookingSummary" style="margin-top: 12px; font-size: 0.85rem;"></div>
+      <button id="sendEmailBtn" style="margin-top: 1rem; background: #1C4E3F; color:white; width:100%; padding:12px; border-radius:60px; font-weight:600; cursor:pointer;"><i class="fas fa-envelope"></i> Email Booking Details to Hospital</button>
+      <p style="font-size:0.7rem; margin-top:10px;">* Click to open email client with pre-filled details. Admin will confirm within 24h.</p>
+    </div>
+  </div>
+  <footer>
+    <i class="fas fa-hand-holding-heart"></i> Secure online payment via PayPal | All patient data encrypted | Sri Lanka medical tourism alliance
+  </footer>
+</div>
+
+<script>
+  // ---- Helper functions ----
+  const arrivalDateInput = document.getElementById('arrivalDate');
+  const departureDateInput = document.getElementById('departureDate');
+  const companionsInput = document.getElementById('companions');
+  const chkFlight = document.getElementById('chkFlight');
+  const chkHotel = document.getElementById('chkHotel');
+  const chkTransfer = document.getElementById('chkTransfer');
+  const chkLocalTransport = document.getElementById('chkLocalTransport');
+  const chkMealPlan = document.getElementById('chkMealPlan');
+  const hotelTier = document.getElementById('hotelTier');
+  const flightClass = document.getElementById('flightClass');
+
+  const totalSpan = document.getElementById('totalPriceUSD');
+  const priceDetailDiv = document.getElementById('priceDetail');
+  const stayNightsSpan = document.getElementById('stayNightsInfo');
+
+  let currentTotal = 0;
+  let paymentCompleted = false;   // avoid double submission
+  let lastBookingData = null;
+
+  function calculateNights() {
+    if (!arrivalDateInput.value || !departureDateInput.value) return 0;
+    const start = new Date(arrivalDateInput.value);
+    const end = new Date(departureDateInput.value);
+    if (start >= end) return 0;
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }
+
+  function updatePrice() {
+    // Base fees: coordination + medical admin
+    let total = 450;  // base patient management & hospital liaison
+    
+    const nights = calculateNights();
+    const companions = parseInt(companionsInput.value) || 0;
+    
+    // Flight tickets (return): main patient + each companion
+    if (chkFlight.checked) {
+      let flightBaseCost = flightClass.value === 'economy' ? 600 : 1350;
+      let totalPassengers = 1 + companions;
+      total += flightBaseCost * totalPassengers;
+    }
+    
+    // Hotel accommodation: per night per room (shared companion room)
+    if (chkHotel.checked && nights > 0) {
+      let hotelRate = 70;
+      if (hotelTier.value === 'deluxe') hotelRate = 140;
+      if (hotelTier.value === 'luxury') hotelRate = 260;
+      // assume companions stay in same / extra bed: extra $30 per companion per night
+      let hotelCost = hotelRate * nights;
+      let companionExtra = companions * 35 * nights;
+      total += hotelCost + companionExtra;
+    }
+    
+    // Transfer (airport pickup/drop)
+    if (chkTransfer.checked) total += 95;
+    // Daily local transport (hospital shuttles)
+    if (chkLocalTransport.checked) total += 25 * (nights + 1);
+    // Meal plan (per person daily)
+    if (chkMealPlan.checked) {
+      let daysWithFood = nights + 1;
+      let mealCost = 32 * (1 + companions) * daysWithFood;
+      total += mealCost;
+    }
+    // visa assistance inclusive flat
+    if (document.getElementById('chkVisa').checked) total += 70;
+    
+    // extra companion surcharge: additional handling cost per companion +$80
+    total += companions * 80;
+    
+    // final rounding
+    total = Math.round(total * 100) / 100;
+    currentTotal = total;
+    totalSpan.innerText = total.toFixed(2);
+    
+    // render breakdown:
+    let breakdownHtml = `<span>🏥 Med coordination & admin: $450</span>`;
+    if (chkFlight.checked) breakdownHtml += `<span>✈️ Flights (${flightClass.value}): ${flightClass.value === 'economy' ? '$600/pp' : '$1350/pp'}</span>`;
+    if (chkHotel.checked && nights>0) breakdownHtml += `<span>🏨 Hotel (${hotelTier.value}) + companion extras: ${nights} nights</span>`;
+    if (chkTransfer.checked) breakdownHtml += `<span>🚖 Airport transfers: $95</span>`;
+    if (chkLocalTransport.checked) breakdownHtml += `<span>🚙 Local medical transport: $25/day</span>`;
+    if (chkMealPlan.checked) breakdownHtml += `<span>🍽️ Meal plan: $32/day/person</span>`;
+    if (companions>0) breakdownHtml += `<span>👥 Companion care + support: $80 each</span>`;
+    priceDetailDiv.innerHTML = breakdownHtml;
+    stayNightsSpan.innerText = nights ? `📅 ${nights} night(s) stay` : `📅 select dates`;
+  }
+
+  // Attach event listeners
+  const priceInputs = [arrivalDateInput, departureDateInput, companionsInput, chkFlight, chkHotel, chkTransfer, chkLocalTransport, chkMealPlan, hotelTier, flightClass, document.getElementById('chkVisa')];
+  priceInputs.forEach(el => { if(el) el.addEventListener('change', updatePrice); if(el && el.type==='checkbox') el.addEventListener('change', updatePrice); });
+  companionsInput.addEventListener('input', updatePrice);
+  if(hotelTier) hotelTier.addEventListener('change', updatePrice);
+  if(flightClass) flightClass.addEventListener('change', updatePrice);
+  updatePrice();
+
+  // Validate main required fields function
+  function isFormDataValid() {
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const diagnosis = document.getElementById('diagnosis').value.trim();
+    const treatment = document.getElementById('treatmentReq').value.trim();
+    const arrival = arrivalDateInput.value;
+    const departure = departureDateInput.value;
+    if(!name || !email || !diagnosis || !treatment) return false;
+    if(!arrival || !departure) return false;
+    const startDate = new Date(arrival);
+    const endDate = new Date(departure);
+    if(startDate >= endDate) return false;
+    if(!email.includes('@')) return false;
+    return true;
+  }
+
+  // Gather all booking data as object
+  function gatherBookingData() {
+    return {
+      patient: {
+        fullName: document.getElementById('fullName').value,
+        dob: document.getElementById('dob').value,
+        gender: document.getElementById('gender').value,
+        nationality: document.getElementById('nationality').value,
+        passport: document.getElementById('passport').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+      },
+      medical: {
+        diagnosis: document.getElementById('diagnosis').value,
+        treatmentRequired: document.getElementById('treatmentReq').value,
+        history: document.getElementById('medicalHistory').value,
+        extraNotes: document.getElementById('extraNotes').value,
+        doctorPref: document.getElementById('doctorPref').value,
+      },
+      travel: {
+        hospital: document.getElementById('hospital').value,
+        arrivalDate: arrivalDateInput.value,
+        departureDate: departureDateInput.value,
+        companions: companionsInput.value,
+        flightClass: flightClass.value,
+        hotelTier: hotelTier.value,
+        services: {
+          flight: chkFlight.checked,
+          hotel: chkHotel.checked,
+          transfer: chkTransfer.checked,
+          localTransport: chkLocalTransport.checked,
+          mealPlan: chkMealPlan.checked,
+          visa: document.getElementById('chkVisa').checked,
+        }
+      },
+      emergency: {
+        contactName: document.getElementById('emergencyContact').value,
+        contactPhone: document.getElementById('emergencyPhone').value,
+        specialReq: document.getElementById('specialReq').value,
+      },
+      totalPaidUSD: currentTotal,
+      reservationRef: 'SLMC-' + Math.floor(Math.random() * 1000000) + Date.now().toString(36).toUpperCase(),
+    };
+  }
+
+  // generate email body mailto link
+  function composeEmailToHospital(bookingData) {
+    let subject = `NEW MEDICAL RESERVATION: ${bookingData.patient.fullName} - ${bookingData.reservationRef}`;
+    let bodyLines = [];
+    bodyLines.push(`Dear Sri Lanka Medical Concierge Team,`);
+    bodyLines.push(`I have successfully completed the online payment via PayPal for my medical treatment journey.`);
+    bodyLines.push(`\n--- RESERVATION DETAILS ---`);
+    bodyLines.push(`Reservation ID: ${bookingData.reservationRef}`);
+    bodyLines.push(`Patient: ${bookingData.patient.fullName} (DOB: ${bookingData.patient.dob || 'N/A'})`);
+    bodyLines.push(`Nationality: ${bookingData.patient.nationality}, Passport: ${bookingData.patient.passport}`);
+    bodyLines.push(`Email: ${bookingData.patient.email} | Phone: ${bookingData.patient.phone}`);
+    bodyLines.push(`\n🏥 Medical: ${bookingData.medical.diagnosis} → Treatment: ${bookingData.medical.treatmentRequired}`);
+    bodyLines.push(`🏨 Hospital: ${bookingData.travel.hospital} | Doctor: ${bookingData.medical.doctorPref || 'Any available'}`);
+    bodyLines.push(`📅 Arrival: ${bookingData.travel.arrivalDate} | Departure: ${bookingData.travel.departureDate}`);
+    bodyLines.push(`👥 Companions: ${bookingData.travel.companions}`);
+    bodyLines.push(`\n✈️ Services Requested:`);
+    bodyLines.push(`- Air ticket: ${bookingData.travel.services.flight ? 'Yes ('+bookingData.travel.flightClass+')' : 'No'}`);
+    bodyLines.push(`- Hotel: ${bookingData.travel.services.hotel ? bookingData.travel.hotelTier : 'No'}`);
+    bodyLines.push(`- Airport transfer: ${bookingData.travel.services.transfer ? 'Yes' : 'No'}`);
+    bodyLines.push(`- Local transport: ${bookingData.travel.services.localTransport ? 'Yes' : 'No'}`);
+    bodyLines.push(`- Meal plan: ${bookingData.travel.services.mealPlan ? 'Yes' : 'No'}`);
+    bodyLines.push(`- Visa help: ${bookingData.travel.services.visa ? 'Requested' : 'Not needed'}`);
+    bodyLines.push(`\n💵 Total Paid: $${bookingData.totalPaidUSD} USD via PayPal`);
+    bodyLines.push(`\n📌 Special notes / Emergency: ${bookingData.emergency.specialReq || '—'} | Emergency contact: ${bookingData.emergency.contactName} (${bookingData.emergency.contactPhone})`);
+    bodyLines.push(`\nPlease confirm my door-to-door arrangement, flights & hotel booking. Thank you!`);
+    bodyLines.push(`\n--- This is an automated reservation request from Ceylon MediConnect ---`);
+    let bodyEncoded = encodeURIComponent(bodyLines.join('\n'));
+    let mailTo = `mailto:reservations@ceylonmedical.lk?subject=${encodeURIComponent(subject)}&body=${bodyEncoded}`;
+    return mailTo;
+  }
+
+  // show confirmation UI after payment
+  function finalizeReservationAfterPayment(paymentDetails) {
+    if(paymentCompleted) return;
+    paymentCompleted = true;
+    const bookingData = gatherBookingData();
+    lastBookingData = bookingData;
+    // display confirmation block
+    const confirmDiv = document.getElementById('confirmationBlock');
+    const summaryDiv = document.getElementById('bookingSummary');
+    summaryDiv.innerHTML = `<strong>${bookingData.reservationRef}</strong><br>Name: ${bookingData.patient.fullName}<br>Treatment: ${bookingData.medical.treatmentRequired.substring(0,60)}<br>Hospital: ${bookingData.travel.hospital}<br>Total paid: <span style="color:#006B4C;">$${bookingData.totalPaidUSD}</span><br>PayPal transaction: ${paymentDetails.id || 'captured'}`;
+    confirmDiv.style.display = 'block';
+    // disable further payment clicks by removing paypal container
+    const paypalContainer = document.getElementById('paypal-button-container');
+    if(paypalContainer) paypalContainer.style.display = 'none';
+    document.getElementById('paypalAlert').style.display = 'none';
+    // store in localStorage for reference
+    localStorage.setItem('lastMedicalBooking', JSON.stringify(bookingData));
+    // scroll to confirmation
+    confirmDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // PayPal button dynamic rendering with validation
+  function renderPayPalButton() {
+    const container = document.getElementById('paypal-button-container');
+    container.innerHTML = ''; // clear old
+    if(window.paypal && window.paypal.Buttons) {
+      const button = paypal.Buttons({
+        style: { layout: 'vertical', color: 'blue', shape: 'pill', label: 'paypal' },
+        createOrder: function(data, actions) {
+          // validate before creating order
+          if(!isFormDataValid()) {
+            const alertBox = document.getElementById('paypalAlert');
+            document.getElementById('alertText').innerText = '❌ Please fill all mandatory fields (name, email, diagnosis, treatment, valid dates).';
+            alertBox.style.display = 'block';
+            return actions.reject();
+          }
+          if(currentTotal <= 0) {
+            document.getElementById('alertText').innerText = '⚠️ Total amount cannot be zero. Please select services.';
+            document.getElementById('paypalAlert').style.display = 'block';
+            return actions.reject();
+          }
+          document.getElementById('paypalAlert').style.display = 'none';
+          return actions.order.create({
+            purchase_units: [{
+              description: "Sri Lanka Medical Door-to-Door Package",
+              amount: { value: currentTotal.toFixed(2), currency_code: "USD" },
+              custom_id: "medical_reservation"
+            }],
+            application_context: { shipping_preference: "NO_SHIPPING" }
+          });
+        },
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(details) {
+            // payment success
+            finalizeReservationAfterPayment({ id: details.id, payer: details.payer });
+          });
+        },
+        onError: function(err) {
+          console.error(err);
+          document.getElementById('alertText').innerText = 'Payment gateway error. Please try again or contact support.';
+          document.getElementById('paypalAlert').style.display = 'block';
+        }
+      });
+      if(button) button.render('#paypal-button-container');
+    } else {
+      container.innerHTML = '<div class="alert-message" style="background:#FEE2E2;">⚠️ PayPal SDK not loaded. Check client ID or network.</div>';
+    }
+  }
+
+  // initial render
+  renderPayPalButton();
+
+  // re-render when total changes? On each price update, we must re-render button because total amount changed
+  function refreshPayPalOnAmountChange() {
+    if(paymentCompleted) return;
+    renderPayPalButton();
+  }
+  // add listener to recalc price and refresh button after price updates (prevents stale amount)
+  const allDynamic = [arrivalDateInput, departureDateInput, companionsInput, chkFlight, chkHotel, chkTransfer, chkLocalTransport, chkMealPlan, hotelTier, flightClass, document.getElementById('chkVisa')];
+  allDynamic.forEach(el => {
+    if(el) el.addEventListener('change', () => { updatePrice(); refreshPayPalOnAmountChange(); });
+  });
+  // also watch text fields but only price doesn't depend, but to be safe we also call refresh on date updates
+  const dateListeners = [arrivalDateInput, departureDateInput];
+  dateListeners.forEach(d => d && d.addEventListener('change', () => { updatePrice(); refreshPayPalOnAmountChange(); }));
+  
+  // manual refresh for companions etc
+  companionsInput.addEventListener('input', () => { updatePrice(); refreshPayPalOnAmountChange(); });
+
+  // Email button logic
+  document.getElementById('sendEmailBtn').addEventListener('click', function(e) {
+    if(lastBookingData) {
+      const mailLink = composeEmailToHospital(lastBookingData);
+      window.location.href = mailLink;
+    } else {
+      alert("No completed booking found. Please complete payment first.");
+    }
+  });
+  
+  // initial additional validation
+  window.addEventListener('load', () => {
+    updatePrice();
+    setTimeout(() => { if(window.paypal) renderPayPalButton(); else console.warn("PayPal not ready"); }, 300);
+  });
+</script>
+</body>
+</html>
