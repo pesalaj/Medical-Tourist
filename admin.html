@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Ceylon MediConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    body { background: #1e2f2a; font-family: 'Inter', sans-serif; padding: 2rem; }
+    .admin-container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 2rem; overflow: hidden; }
+    .admin-header { background: #006B4C; color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .logout-btn { background: rgba(255,255,255,0.2); border: none; padding: 0.5rem 1.2rem; border-radius: 40px; color: white; cursor: pointer; }
+    .stats { display: flex; gap: 2rem; padding: 1.5rem 2rem; background: #f4f9f6; border-bottom: 1px solid #cde6dd; flex-wrap: wrap; }
+    .stat-card { background: white; padding: 1rem 2rem; border-radius: 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .booking-table { padding: 1.5rem 2rem; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid #e2ece6; }
+    th { background: #eaf6f0; font-weight: 600; }
+    .status-badge { padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: bold; }
+    .status-pending { background: #ffe6b3; color: #a16500; }
+    .status-confirmed { background: #c8f0e1; color: #006B4C; }
+    button.confirm-btn { background: #009E6B; border: none; color: white; padding: 4px 12px; border-radius: 30px; cursor: pointer; }
+    .export-btn { background: #1C4E3F; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; margin-left: 1rem; }
+    .login-screen { max-width: 400px; margin: 100px auto; background: white; padding: 2rem; border-radius: 2rem; text-align: center; }
+    input { padding: 12px; width: 100%; margin: 10px 0; border-radius: 40px; border: 1px solid #ccc; }
+    .hidden { display: none; }
+    footer { text-align: center; padding: 1rem; font-size: 0.7rem; color: #5c7c6e; background: #f8fbf9; border-top: 1px solid #e0ede6; }
+    .developer-credit { font-weight: 500; color: #006B4C; }
+  </style>
+</head>
+<body>
+<div id="loginDiv" class="login-screen">
+  <i class="fas fa-shield-alt" style="font-size: 3rem; color:#006B4C;"></i>
+  <h2>Admin Login</h2>
+  <input type="password" id="adminPassword" placeholder="Enter password">
+  <button id="loginBtn" style="background:#006B4C; color:white; padding:10px; width:100%; border-radius:40px; border:none;">Login</button>
+  <p style="margin-top:1rem; font-size:0.7rem;">Default: <strong>admin123</strong></p>
+</div>
+
+<div id="adminPanel" class="admin-container hidden">
+  <div class="admin-header">
+    <h2><i class="fas fa-chart-line"></i> Ceylon MediConnect Admin</h2>
+    <button id="logoutBtnAdmin" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+  <div class="stats">
+    <div class="stat-card"><strong>Total Bookings</strong><br><span id="totalCount">0</span></div>
+    <div class="stat-card"><strong>Pending</strong><br><span id="pendingCount">0</span></div>
+    <div class="stat-card"><strong>Confirmed</strong><br><span id="confirmedCount">0</span></div>
+    <div><button id="exportCsvBtn" class="export-btn"><i class="fas fa-download"></i> Export CSV</button></div>
+  </div>
+  <div class="booking-table">
+    <table id="bookingsTable">
+      <thead>
+        <tr><th>ID</th><th>Patient</th><th>Email</th><th>Treatment</th><th>Hospital</th><th>Total (USD)</th><th>Status</th><th>Action</th></tr>
+      </thead>
+      <tbody id="bookingsTbody"></tbody>
+    </table>
+  </div>
+  <footer>
+    <div>© 2026 Ceylon MediConnect. All rights reserved.</div>
+    <div class="developer-credit">Developed by Pesala Jayawardene</div>
+  </footer>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = "admin123";
+  let bookings = [];
+
+  function loadBookings() {
+    const stored = localStorage.getItem('medicalBookings');
+    bookings = stored ? JSON.parse(stored) : [];
+    renderBookings();
+  }
+
+  function renderBookings() {
+    const tbody = document.getElementById('bookingsTbody');
+    tbody.innerHTML = '';
+    let pending = 0, confirmed = 0;
+    bookings.forEach((b, idx) => {
+      if(b.status === 'pending') pending++;
+      if(b.status === 'confirmed') confirmed++;
+      const row = tbody.insertRow();
+      row.innerHTML = `
+        <tr>${b.id || 'N/A'}</td>
+        <td>${b.patient?.name || ''}</td>
+        <td>${b.patient?.email || ''}</td>
+        <td>${(b.patient?.treatment || '').substring(0,30)}</td>
+        <td>${b.travel?.hospital || ''}</td>
+        <td>$${b.totalPaid || 0}</td>
+        <td><span class="status-badge status-${b.status === 'confirmed' ? 'confirmed' : 'pending'}">${b.status.toUpperCase()}</span></td>
+        <td>${b.status === 'pending' ? `<button class="confirm-btn" data-idx="${idx}">Confirm</button>` : '✔️ Confirmed'}</td>
+      `;
+    });
+    document.getElementById('totalCount').innerText = bookings.length;
+    document.getElementById('pendingCount').innerText = pending;
+    document.getElementById('confirmedCount').innerText = confirmed;
+    document.querySelectorAll('.confirm-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        let idx = btn.getAttribute('data-idx');
+        if(idx !== null && bookings[idx]) {
+          bookings[idx].status = 'confirmed';
+          localStorage.setItem('medicalBookings', JSON.stringify(bookings));
+          renderBookings();
+        }
+      });
+    });
+  }
+
+  function exportToCSV() {
+    let csvRows = [["Booking ID","Patient Name","Email","Treatment","Hospital","Arrival","Departure","Total USD","Status"]];
+    bookings.forEach(b => {
+      csvRows.push([
+        b.id, b.patient?.name, b.patient?.email, b.patient?.treatment, b.travel?.hospital,
+        b.travel?.arrival, b.travel?.departure, b.totalPaid, b.status
+      ]);
+    });
+    const csvContent = csvRows.map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], {type: "text/csv"});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "medical_bookings.csv";
+    link.click();
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    const pwd = document.getElementById('adminPassword').value;
+    if(pwd === ADMIN_PASSWORD) {
+      document.getElementById('loginDiv').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      loadBookings();
+    } else {
+      alert("Wrong password");
+    }
+  });
+  document.getElementById('logoutBtnAdmin').addEventListener('click', () => {
+    document.getElementById('loginDiv').classList.remove('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+  });
+  document.getElementById('exportCsvBtn').addEventListener('click', exportToCSV);
+</script>
+</body>
+</html>
