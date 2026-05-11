@@ -15,15 +15,15 @@
     .hero h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, #006B4C, #009E6B); background-clip: text; -webkit-background-clip: text; color: transparent; }
     .booking-card { background: white; border-radius: 2rem; box-shadow: 0 20px 35px -12px rgba(0,32,20,0.15); overflow: hidden; }
     .tabs { display: flex; border-bottom: 2px solid #e0ede6; background: #fefcf5; }
-    .tab-btn { flex: 1; padding: 1rem; font-size: 1rem; font-weight: 600; background: none; border: none; cursor: pointer; color: #5a7c6e; }
+    .tab-btn { flex: 1; padding: 1rem; font-size: 1rem; font-weight: 600; background: none; border: none; cursor: pointer; color: #5a7c6e; text-transform: capitalize; }
     .tab-btn.active { color: #009E6B; border-bottom: 3px solid #009E6B; background: white; }
     .tab-content { display: none; padding: 2rem; }
     .tab-content.active { display: block; }
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2rem; }
     .form-section { background: #FEFCF5; padding: 1.2rem 1.5rem; border-radius: 1.5rem; border: 1px solid #e0ede6; }
-    .form-section h3 { font-size: 1.35rem; font-weight: 600; margin-bottom: 1.2rem; border-left: 5px solid #009E6B; padding-left: 0.9rem; color: #1C4E3F; }
+    .form-section h3 { font-size: 1.35rem; font-weight: 600; margin-bottom: 1.2rem; border-left: 5px solid #009E6B; padding-left: 0.9rem; color: #1C4E3F; text-transform: capitalize; }
     .input-group { margin-bottom: 1.1rem; display: flex; flex-direction: column; }
-    .input-group label { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 6px; }
+    .input-group label { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 6px; text-transform: capitalize; }
     input, select, textarea { padding: 12px 14px; border-radius: 16px; border: 1.5px solid #dde8e2; font-family: inherit; font-size: 0.9rem; }
     .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .checkbox-group { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0; }
@@ -33,27 +33,30 @@
     .paypal-button-container, .bank-transfer-container { margin: 20px 0; }
     .bank-details { background: #f9f2e0; padding: 1rem; border-radius: 1rem; margin-top: 1rem; }
     .legal-text { font-size: 0.85rem; background: #faf3e0; padding: 1rem; border-radius: 1rem; margin: 15px 0; }
-    .next-btn, .back-btn { background: #009E6B; color: white; border: none; padding: 12px 28px; border-radius: 60px; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+    .next-btn, .back-btn { background: #009E6B; color: white; border: none; padding: 12px 28px; border-radius: 60px; font-weight: 600; cursor: pointer; margin-top: 1rem; text-transform: uppercase; }
     .back-btn { background: #a0c2b5; margin-right: 1rem; }
     .footer-buttons { text-align: right; margin-top: 2rem; }
     .photo-preview { margin-top: 8px; max-width: 100px; border-radius: 12px; }
     footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: #5f8377; }
     .admin-link { text-align: center; margin: 1rem 0; font-size: 0.8rem; }
-    .admin-link a { color: #006B4C; text-decoration: none; }
+    .admin-link a { color: #006B4C; text-decoration: none; text-transform: capitalize; }
+    .registration-info { background: #e0f2e9; padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; }
+    .picture-placeholder { text-align: center; margin-top: 1rem; }
+    .picture-placeholder img { max-width: 100%; border-radius: 1rem; }
     @media (max-width:780px) { .tab-content { padding: 1rem; } }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="hero">
-    <h1><i class="fas fa-hands-helping"></i> Ceylon MediConnect</h1>
-    <p>Premium door-to-door medical care | Sri Lanka's top hospitals</p>
+    <h1><i class="fas fa-hands-helping"></i> Ceylon Medicconnect</h1>
+    <p>Premium door‑to‑door medical care | Sri Lanka's top hospitals</p>
   </div>
 
   <div class="booking-card">
     <div class="tabs">
-      <button class="tab-btn active" data-tab="tab1">📋 Medical & Travel Details</button>
-      <button class="tab-btn" data-tab="tab2">⚖️ Legal, Emergency & Payment</button>
+      <button class="tab-btn active" data-tab="tab1">Medical & Travel Details</button>
+      <button class="tab-btn" data-tab="tab2">Legal, Emergency & Payment</button>
     </div>
 
     <!-- Tab 1: Medical & Travel Details -->
@@ -62,21 +65,21 @@
         <!-- Column 1: Patient & Medical -->
         <div class="form-section">
           <h3><i class="fas fa-user-md"></i> Patient & Medical</h3>
-          <div class="input-group"><label><i class="fas fa-user"></i> Full Name *</label><input type="text" id="fullName"></div>
-          <div class="row-2col"><div><label>DOB *</label><input type="date" id="dob"></div><div><label>Gender</label><select id="gender"><option>Male</option><option>Female</option></select></div></div>
-          <div class="row-2col"><div><label>Nationality</label><input id="nationality"></div><div><label>Passport</label><input id="passport"></div></div>
-          <div class="row-2col"><div><label>Email *</label><input type="email" id="email"></div><div><label>Phone</label><input id="phone"></div></div>
-          <div class="input-group"><label>Diagnosis *</label><textarea id="diagnosis" rows="2"></textarea></div>
-          <div class="input-group"><label>Required Treatment *</label><textarea id="treatmentReq" rows="2"></textarea></div>
-          <div class="input-group"><label>Insurance Provider</label><input id="insuranceProvider"></div>
-          <div class="input-group"><label>Insurance Policy #</label><input id="insurancePolicy"></div>
-          <div class="input-group"><label><i class="fas fa-camera"></i> Upload Patient Photo *</label><input type="file" id="patientPhoto" accept="image/*"><img id="photoPreview" class="photo-preview" style="display:none;"></div>
+          <div class="input-group"><label><i class="fas fa-user"></i> Full name *</label><input type="text" id="fullName"></div>
+          <div class="row-2col"><div><label>Date of birth *</label><input type="date" id="dob"></div><div><label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select></div></div>
+          <div class="row-2col"><div><label>Nationality</label><input id="nationality"></div><div><label>Passport number</label><input id="passport"></div></div>
+          <div class="row-2col"><div><label>Email address *</label><input type="email" id="email"></div><div><label>Phone number</label><input id="phone"></div></div>
+          <div class="input-group"><label>Primary diagnosis *</label><textarea id="diagnosis" rows="2"></textarea></div>
+          <div class="input-group"><label>Required treatment *</label><textarea id="treatmentReq" rows="2"></textarea></div>
+          <div class="input-group"><label>Insurance provider</label><input id="insuranceProvider"></div>
+          <div class="input-group"><label>Insurance policy number</label><input id="insurancePolicy"></div>
+          <div class="input-group"><label><i class="fas fa-camera"></i> Upload patient photo *</label><input type="file" id="patientPhoto" accept="image/*"><img id="photoPreview" class="photo-preview" style="display:none;"></div>
         </div>
 
         <!-- Column 2: Hospital & Travel -->
         <div class="form-section">
           <h3><i class="fas fa-hospital-user"></i> Hospital & Travel</h3>
-          <div class="input-group"><label>Preferred Hospital *</label><select id="hospital">
+          <div class="input-group"><label>Preferred hospital *</label><select id="hospital">
             <option value="Nawaloka Hospital">Nawaloka Hospital, Colombo</option>
             <option value="Asiri Surgical Hospital">Asiri Surgical Hospital</option>
             <option value="Lanka Hospitals">Lanka Hospitals</option>
@@ -84,75 +87,89 @@
             <option value="Hemas Hospital">Hemas Hospital Wattala</option>
             <option value="Ninewells Hospital">Ninewells Hospital, Kandana</option>
           </select></div>
-          <div class="row-2col"><div><label>Arrival Date *</label><input type="date" id="arrivalDate"></div><div><label>Departure Date *</label><input type="date" id="departureDate"></div></div>
-          <div class="input-group"><label>Companions (0-4)</label><input type="number" id="companions" min="0" max="4" value="1"></div>
+          <div class="row-2col"><div><label>Arrival date *</label><input type="date" id="arrivalDate"></div><div><label>Departure date *</label><input type="date" id="departureDate"></div></div>
+          <div class="input-group"><label>Number of companions (0-4)</label><input type="number" id="companions" min="0" max="4" value="1"></div>
           <div class="row-2col"><div><label>Flight class</label><select id="flightClass"><option value="economy">Economy</option><option value="business">Business</option></select></div><div><label>Hotel tier</label><select id="hotelTier"><option value="standard">Standard</option><option value="deluxe" selected>Deluxe</option><option value="luxury">Luxury</option></select></div></div>
           <div class="checkbox-group">
             <label><input type="checkbox" id="chkFlight" checked> ✈️ Flight</label>
             <label><input type="checkbox" id="chkHotel" checked> 🏨 Hotel</label>
-            <label><input type="checkbox" id="chkTransfer" checked> 🚕 Transfer</label>
+            <label><input type="checkbox" id="chkTransfer" checked> 🚕 Airport transfer</label>
             <label><input type="checkbox" id="chkLocalTransport" checked> 🚌 Local transport</label>
-            <label><input type="checkbox" id="chkMealPlan" checked> 🍽️ Meals</label>
-            <label><input type="checkbox" id="chkVisa" checked> 📄 Visa help</label>
+            <label><input type="checkbox" id="chkMealPlan" checked> 🍽️ Meal plan</label>
+            <label><input type="checkbox" id="chkVisa" checked> 📄 Visa assistance</label>
           </div>
           <div class="input-group"><label><i class="fas fa-user-nurse"></i> Daily bystander (trained nurse) – LKR 6500/day</label><select id="bystanderOption"><option value="no">No</option><option value="yes">Yes, add per day</option></select></div>
-          <div class="input-group"><label>Airport ambulance/doctor</label><select id="airportMedical"><option value="no">No</option><option value="ambulance">Ambulance only</option><option value="doctor">Doctor + ambulance</option></select></div>
+          <div class="input-group"><label>Airport ambulance / doctor</label><select id="airportMedical"><option value="no">No</option><option value="ambulance">Ambulance only</option><option value="doctor">Doctor + ambulance</option></select></div>
         </div>
 
-        <!-- Column 3: Additional charges -->
+        <!-- Column 3: Other charges + picture -->
         <div class="form-section">
-          <h3><i class="fas fa-plus-circle"></i> Other Charges & Notes</h3>
-          <div class="input-group"><label>Description of additional charge</label><input id="extraChargeDesc" placeholder="e.g., Special wheelchair, extra medication"></div>
-          <div class="input-group"><label>Amount (USD)</label><input type="number" id="extraChargeAmount" step="10" value="0"></div>
+          <h3><i class="fas fa-plus-circle"></i> Other charges & notes</h3>
+          <div class="input-group"><label>Description of additional charge</label><input id="extraChargeDesc" placeholder="E.g., special wheelchair, extra medication"></div>
+          <div class="input-group"><label>Amount (usd)</label><input type="number" id="extraChargeAmount" step="10" value="0"></div>
           <div class="input-group"><label>Special requests (diet, mobility)</label><textarea id="specialReq" rows="3"></textarea></div>
+          <div class="picture-placeholder">
+            <img src="https://cdn.pixabay.com/photo/2020/06/03/11/19/medical-5253591_640.png" alt="Medical tourism illustration" style="max-width:100%; border-radius:1rem;">
+            <p style="font-size:0.7rem; margin-top:5px;">Compassionate care, every step of the way</p>
+          </div>
         </div>
       </div>
-      <div class="footer-buttons"><button class="next-btn" onclick="goToTab(2)">Proceed to Legal & Payment →</button></div>
+
+      <!-- Registration status & payment -->
+      <div class="registration-info" id="registrationPanel">
+        <strong><i class="fas fa-id-card"></i> Registration status</strong><br>
+        <span id="regStatusText">Checking...</span>
+        <div id="regActions" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="footer-buttons"><button class="next-btn" onclick="goToTab(2)">Proceed to legal & payment →</button></div>
     </div>
 
     <!-- Tab 2: Legal, Emergency & Payment -->
     <div id="tab2" class="tab-content">
       <div class="form-grid">
         <div class="form-section">
-          <h3><i class="fas fa-phone-alt"></i> Emergency Contacts</h3>
+          <h3><i class="fas fa-phone-alt"></i> Emergency contacts</h3>
           <div class="input-group"><label>Emergency contact name & relation</label><input id="emergencyContact"></div>
-          <div class="input-group"><label>Emergency phone</label><input id="emergencyPhone"></div>
+          <div class="input-group"><label>Emergency phone number</label><input id="emergencyPhone"></div>
           <div class="input-group"><label>Preferred contact method</label><select id="contactMethod"><option>WhatsApp</option><option>Email</option><option>Phone</option></select></div>
         </div>
         <div class="form-section">
-          <h3><i class="fas fa-gavel"></i> Legal & Payment</h3>
+          <h3><i class="fas fa-gavel"></i> Legal & payment</h3>
           <div id="deathProcedureText" class="legal-text"><strong>⚠️ Death & liability terms</strong><br><span id="deathLiabilityText">Loading...</span></div>
           <div class="input-group"><label><input type="checkbox" id="acceptTerms"> I have read and agree to the above terms</label></div>
           <div class="price-panel">
             <div class="price-breakdown" id="priceDetail"></div>
-            <div class="total-price"><span>Total (USD)</span> <span id="totalPriceUSD">0.00</span></div>
+            <div class="total-price"><span>Total (usd)</span> <span id="totalPriceUSD">0.00</span></div>
           </div>
-          <div class="input-group"><label>Payment method</label><select id="paymentMethod"><option value="paypal">PayPal</option><option value="bank">Direct Bank Transfer</option></select></div>
-          <div id="bankDetailsContainer" style="display:none;" class="bank-details"><strong>Bank Details:</strong><br><span id="bankDetailsText">Loading...</span></div>
+          <div class="input-group"><label>Payment method for this booking</label><select id="paymentMethod"><option value="paypal">PayPal</option><option value="bank">Direct bank transfer</option></select></div>
+          <div id="bankDetailsContainer" style="display:none;" class="bank-details"><strong>Bank transfer details:</strong><br><span id="bankDetailsText">Loading...</span></div>
           <div id="paypalAlert" class="alert-message" style="display:none;"></div>
           <div id="paypal-button-container" class="paypal-button-container"></div>
-          <div id="bank-transfer-container" class="bank-transfer-container" style="display:none;"><button id="manualPaymentBtn" style="background:#1C4E3F; color:white; padding:12px; width:100%; border-radius:60px;">Confirm Bank Transfer</button></div>
-          <div id="confirmationBlock" class="confirmation-card" style="display:none;"><i class="fas fa-check-circle"></i> <strong>Booking saved!</strong><div id="bookingSummary"></div><button id="printBtn">Print Summary</button></div>
+          <div id="bank-transfer-container" class="bank-transfer-container" style="display:none;"><button id="manualPaymentBtn" style="background:#1C4E3F; color:white; padding:12px; width:100%; border-radius:60px;">Confirm bank transfer</button></div>
+          <div id="confirmationBlock" class="confirmation-card" style="display:none;"><i class="fas fa-check-circle"></i> <strong>Booking saved!</strong><div id="bookingSummary"></div><button id="printBtn">Print summary</button></div>
         </div>
       </div>
       <div class="footer-buttons"><button class="back-btn" onclick="goToTab(1)">← Back</button></div>
     </div>
   </div>
-  <!-- TEMPORARY ADMIN LINK FOR TESTING -->
-  <div class="admin-link"><a href="admin.html"><i class="fas fa-lock"></i> Admin Login (testing only)</a></div>
-  <footer>© 2026 Ceylon MediConnect. Developed by Pesala Jayawardene</footer>
+  <!-- Temporary admin link for testing -->
+  <div class="admin-link"><a href="admin.html"><i class="fas fa-lock"></i> Admin login (testing only)</a> | <a href="registered_patients.html">Registered patients list</a></div>
+  <footer>© 2026 Ceylon Medicconnect. Developed by Pesala Jayawardene</footer>
 </div>
 
 <script>
-  // Pricing & config (loads from localStorage)
+  // Pricing & legal config (same as before)
   const defaultPricing = { baseAdminFee:450, flightEconomy:600, flightBusiness:1350, hotelStandard:70, hotelDeluxe:140, hotelLuxury:260, companionExtraHotel:35, transferFlat:95, dailyLocalTransport:25, mealPlanPerPersonPerDay:32, visaAssistance:70, companionHandling:80, airportAmbulanceFee:150, airportDoctorFee:300, bystanderDailyFeeUSD:22 };
   const defaultLegal = { deathProcedure: "In case of death, next of kin notified. Repatriation arranged at family's expense. All costs borne by patient's family or insurance.", costLiability: "Medical and repatriation costs are patient's responsibility. Package covers only pre-agreed travel/accommodation." };
-  const defaultBank = { accountName: "Ceylon MediConnect (Pvt) Ltd", bankName: "Commercial Bank of Ceylon", accountNumber: "123-456-7890", swiftCode: "CCEYLKLX", currency: "USD" };
+  const defaultBank = { accountName: "Ceylon Medicconnect (Pvt) Ltd", bankName: "Commercial Bank of Ceylon", accountNumber: "123-456-7890", swiftCode: "CCEYLKLX", currency: "USD" };
 
   let pricing = { ...defaultPricing };
   let legalConfig = { ...defaultLegal };
   let bankDetails = { ...defaultBank };
   let photoBase64 = "";
+  let currentPatientEmail = "";
+  let currentRegistration = null; // { type, expiryDate, discountPerVisit }
 
   function loadConfigs() {
     const savedPricing = localStorage.getItem('ceylonPricing');
@@ -161,77 +178,110 @@
     if (savedLegal) legalConfig = { ...legalConfig, ...JSON.parse(savedLegal) };
     const savedBank = localStorage.getItem('ceylonBank');
     if (savedBank) bankDetails = { ...bankDetails, ...JSON.parse(savedBank) };
-    document.getElementById('deathLiabilityText').innerHTML = `<strong>Death:</strong> ${legalConfig.deathProcedure}<br><strong>Cost liability:</strong> ${legalConfig.costLiability}`;
+    document.getElementById('deathLiabilityText').innerHTML = `<strong>Death procedure:</strong> ${legalConfig.deathProcedure}<br><br><strong>Cost liability:</strong> ${legalConfig.costLiability}`;
     document.getElementById('bankDetailsText').innerHTML = `Bank: ${bankDetails.bankName}<br>Account: ${bankDetails.accountName}<br>Number: ${bankDetails.accountNumber}<br>SWIFT: ${bankDetails.swiftCode}<br>Currency: ${bankDetails.currency}`;
   }
   loadConfigs();
 
-  function calculateNights() {
-    const start = new Date(document.getElementById('arrivalDate').value);
-    const end = new Date(document.getElementById('departureDate').value);
-    if (isNaN(start) || isNaN(end) || start >= end) return 0;
-    return Math.ceil((end - start) / (1000*60*60*24));
+  function checkRegistrationByEmail(email) {
+    if (!email) return null;
+    const registrations = JSON.parse(localStorage.getItem('registeredPatients') || '[]');
+    const found = registrations.find(r => r.email.toLowerCase() === email.toLowerCase());
+    if (found) {
+      if (found.type === 'lifetime') return { type: 'lifetime', discountPerVisit: 35, expiryDate: null };
+      if (found.type === 'annual' && new Date(found.expiryDate) > new Date()) return { type: 'annual', discountPerVisit: 30, expiryDate: found.expiryDate };
+      return null; // expired
+    }
+    return null;
   }
+
+  function updateRegistrationUI() {
+    const email = document.getElementById('email').value.trim();
+    currentPatientEmail = email;
+    currentRegistration = checkRegistrationByEmail(email);
+    const statusSpan = document.getElementById('regStatusText');
+    const actionsDiv = document.getElementById('regActions');
+    if (!email) {
+      statusSpan.innerText = 'Enter email to check registration status.';
+      actionsDiv.innerHTML = '';
+      return;
+    }
+    if (currentRegistration) {
+      const discountMsg = currentRegistration.type === 'lifetime' ? 'Lifetime member – $35 discount per visit' : `Annual member – $30 discount per visit (expires ${new Date(currentRegistration.expiryDate).toDateString()})`;
+      statusSpan.innerHTML = `<span style="color:#006B4C;">✓ Registered (${discountMsg})</span>`;
+      actionsDiv.innerHTML = '';
+    } else {
+      statusSpan.innerHTML = '<span style="color:#b34e00;">Not registered or registration expired.</span>';
+      actionsDiv.innerHTML = `<button id="registerAnnualBtn" style="background:#009E6B; color:white; border:none; padding:6px 12px; border-radius:40px; margin-right:10px;">Register for 1 year ($99)</button>
+                              <button id="registerLifetimeBtn" style="background:#1C4E3F; color:white; border:none; padding:6px 12px; border-radius:40px;">Lifetime registration ($999)</button>`;
+      document.getElementById('registerAnnualBtn')?.addEventListener('click', () => showRegistrationPayment('annual'));
+      document.getElementById('registerLifetimeBtn')?.addEventListener('click', () => showRegistrationPayment('lifetime'));
+    }
+    updatePriceAndBreakdown();
+  }
+
+  function showRegistrationPayment(type) {
+    const amount = type === 'annual' ? 99 : 999;
+    const email = document.getElementById('email').value.trim();
+    if (!email) { alert("Please enter your email first."); return; }
+    if (confirm(`Pay $${amount} for ${type === 'annual' ? '1‑year registration' : 'lifetime registration'}? Payment will be processed via PayPal.`)) {
+      // Use PayPal to charge registration fee
+      const orderData = { purchase_units: [{ amount: { value: amount.toString(), currency_code: "USD" }, description: `${type} registration for ${email}` }] };
+      paypal.Buttons({
+        createOrder: (data, actions) => actions.order.create(orderData),
+        onApprove: (data, actions) => actions.order.capture().then(details => {
+          const registrations = JSON.parse(localStorage.getItem('registeredPatients') || '[]');
+          const existingIndex = registrations.findIndex(r => r.email.toLowerCase() === email.toLowerCase());
+          const newReg = { email: email.toLowerCase(), type: type, registeredAt: new Date().toISOString() };
+          if (type === 'annual') newReg.expiryDate = new Date(Date.now() + 365*24*60*60*1000).toISOString();
+          if (existingIndex !== -1) registrations[existingIndex] = newReg;
+          else registrations.push(newReg);
+          localStorage.setItem('registeredPatients', JSON.stringify(registrations));
+          alert(`Registration successful! You now receive ${type === 'annual' ? '$30' : '$35'} discount on each booking.`);
+          checkRegistrationByEmail(email);
+          updateRegistrationUI();
+        }),
+        onError: () => alert("Payment failed")
+      }).render('#regActions');
+    }
+  }
+
+  function calculateNights() { /* same */ const s=new Date(document.getElementById('arrivalDate').value), e=new Date(document.getElementById('departureDate').value); if(isNaN(s)||isNaN(e)||s>=e) return 0; return Math.ceil((e-s)/(86400000)); }
 
   function updatePriceAndBreakdown() {
     let total = pricing.baseAdminFee;
     const nights = calculateNights();
     const companions = parseInt(document.getElementById('companions').value) || 0;
-    let breakdown = [`🏥 Admin: $${pricing.baseAdminFee}`];
-
-    if (document.getElementById('chkFlight').checked) {
-      const flightCost = document.getElementById('flightClass').value === 'economy' ? pricing.flightEconomy : pricing.flightBusiness;
-      total += flightCost * (1 + companions);
-      breakdown.push(`✈️ Flights: $${flightCost}/pp`);
-    }
-    if (document.getElementById('chkHotel').checked && nights > 0) {
-      let hotelRate = pricing.hotelStandard;
-      const tier = document.getElementById('hotelTier').value;
-      if (tier === 'deluxe') hotelRate = pricing.hotelDeluxe;
-      if (tier === 'luxury') hotelRate = pricing.hotelLuxury;
-      total += hotelRate * nights + pricing.companionExtraHotel * companions * nights;
-      breakdown.push(`🏨 Hotel: ${nights} nights`);
-    }
+    let breakdown = [`🏥 Admin fee: $${pricing.baseAdminFee}`];
+    if (document.getElementById('chkFlight').checked) { const c = document.getElementById('flightClass').value === 'economy' ? pricing.flightEconomy : pricing.flightBusiness; total += c*(1+companions); breakdown.push(`✈️ Flights: $${c}/pp`); }
+    if (document.getElementById('chkHotel').checked && nights>0) { let rate = pricing.hotelStandard; const tier = document.getElementById('hotelTier').value; if(tier==='deluxe') rate=pricing.hotelDeluxe; if(tier==='luxury') rate=pricing.hotelLuxury; total += rate*nights + pricing.companionExtraHotel*companions*nights; breakdown.push(`🏨 Hotel: ${nights} nights`); }
     if (document.getElementById('chkTransfer').checked) { total += pricing.transferFlat; breakdown.push(`🚖 Transfer: $${pricing.transferFlat}`); }
-    if (document.getElementById('chkLocalTransport').checked) { total += pricing.dailyLocalTransport * (nights + 1); breakdown.push(`🚙 Local transport: $${pricing.dailyLocalTransport}/day`); }
-    if (document.getElementById('chkMealPlan').checked) { total += pricing.mealPlanPerPersonPerDay * (1 + companions) * (nights + 1); breakdown.push(`🍽️ Meals: $${pricing.mealPlanPerPersonPerDay}/day`); }
+    if (document.getElementById('chkLocalTransport').checked) { total += pricing.dailyLocalTransport*(nights+1); breakdown.push(`🚙 Local transport: $${pricing.dailyLocalTransport}/day`); }
+    if (document.getElementById('chkMealPlan').checked) { total += pricing.mealPlanPerPersonPerDay*(1+companions)*(nights+1); breakdown.push(`🍽️ Meals: $${pricing.mealPlanPerPersonPerDay}/day`); }
     if (document.getElementById('chkVisa').checked) { total += pricing.visaAssistance; breakdown.push(`📄 Visa help: $${pricing.visaAssistance}`); }
-    if (companions > 0) { total += pricing.companionHandling * companions; breakdown.push(`👥 Companion care: $${pricing.companionHandling} ea`); }
-    
+    if (companions>0) { total += pricing.companionHandling*companions; breakdown.push(`👥 Companion care: $${pricing.companionHandling} ea`); }
     const airport = document.getElementById('airportMedical').value;
-    if (airport === 'ambulance') { total += pricing.airportAmbulanceFee; breakdown.push(`🚑 Ambulance: $${pricing.airportAmbulanceFee}`); }
-    if (airport === 'doctor') { total += pricing.airportDoctorFee; breakdown.push(`👨‍⚕️ Doctor+ambulance: $${pricing.airportDoctorFee}`); }
-
+    if (airport==='ambulance') { total += pricing.airportAmbulanceFee; breakdown.push(`🚑 Ambulance: $${pricing.airportAmbulanceFee}`); }
+    if (airport==='doctor') { total += pricing.airportDoctorFee; breakdown.push(`👨‍⚕️ Doctor+ambulance: $${pricing.airportDoctorFee}`); }
     const bystander = document.getElementById('bystanderOption').value;
-    if (bystander === 'yes' && nights > 0) {
-      total += pricing.bystanderDailyFeeUSD * nights;
-      breakdown.push(`👩‍⚕️ Bystander nurse: $${pricing.bystanderDailyFeeUSD}/day`);
+    if (bystander==='yes' && nights>0) { total += pricing.bystanderDailyFeeUSD*nights; breakdown.push(`👩‍⚕️ Bystander nurse: $${pricing.bystanderDailyFeeUSD}/day`); }
+    const extra = parseFloat(document.getElementById('extraChargeAmount').value)||0;
+    if (extra>0) { total += extra; breakdown.push(`➕ Other charges: $${extra}`); }
+    // Apply registration discount
+    if (currentRegistration) {
+      const discount = currentRegistration.discountPerVisit;
+      total = Math.max(0, total - discount);
+      breakdown.push(`🎟️ Registered member discount: -$${discount}`);
     }
-
-    const extraAmount = parseFloat(document.getElementById('extraChargeAmount').value) || 0;
-    if (extraAmount > 0) {
-      total += extraAmount;
-      breakdown.push(`➕ Other charges: $${extraAmount}`);
-    }
-
     document.getElementById('totalPriceUSD').innerText = total.toFixed(2);
-    document.getElementById('priceDetail').innerHTML = breakdown.map(item => `<span>${item}</span>`).join('');
+    document.getElementById('priceDetail').innerHTML = breakdown.map(i=>`<span>${i}</span>`).join('');
     return total;
   }
 
   // Photo handling
   document.getElementById('patientPhoto').addEventListener('change', function(e) {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        photoBase64 = ev.target.result;
-        const preview = document.getElementById('photoPreview');
-        preview.src = photoBase64;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    }
+    if (file) { const reader = new FileReader(); reader.onload = ev => { photoBase64 = ev.target.result; document.getElementById('photoPreview').src = photoBase64; document.getElementById('photoPreview').style.display = 'block'; }; reader.readAsDataURL(file); }
   });
 
   function validateTab1() {
@@ -251,9 +301,9 @@
   function gatherBookingData() {
     return {
       id: 'BK-'+Date.now(), timestamp: new Date().toISOString(),
-      patient: { fullName: document.getElementById('fullName').value, email: document.getElementById('email').value, phone: document.getElementById('phone').value, diagnosis: document.getElementById('diagnosis').value, treatment: document.getElementById('treatmentReq').value, insuranceProvider: document.getElementById('insuranceProvider').value, insurancePolicy: document.getElementById('insurancePolicy').value, photoBase64: photoBase64 },
+      patient: { fullName: document.getElementById('fullName').value, email: document.getElementById('email').value, phone: document.getElementById('phone').value, diagnosis: document.getElementById('diagnosis').value, treatment: document.getElementById('treatmentReq').value, insuranceProvider: document.getElementById('insuranceProvider').value, insurancePolicy: document.getElementById('insurancePolicy').value, photoBase64: photoBase64, registrationAtBooking: currentRegistration ? { type: currentRegistration.type, discountApplied: currentRegistration.discountPerVisit } : null },
       travel: { hospital: document.getElementById('hospital').value, arrivalDate: document.getElementById('arrivalDate').value, departureDate: document.getElementById('departureDate').value, companions: document.getElementById('companions').value, flightClass: document.getElementById('flightClass').value, hotelTier: document.getElementById('hotelTier').value, services: { flight: document.getElementById('chkFlight').checked, hotel: document.getElementById('chkHotel').checked, transfer: document.getElementById('chkTransfer').checked, localTransport: document.getElementById('chkLocalTransport').checked, mealPlan: document.getElementById('chkMealPlan').checked, visa: document.getElementById('chkVisa').checked }, airportMedical: document.getElementById('airportMedical').value, bystander: document.getElementById('bystanderOption').value === 'yes' },
-      extraCharges: { description: document.getElementById('extraChargeDesc').value, amountUSD: parseFloat(document.getElementById('extraChargeAmount').value) || 0 },
+      extraCharges: { description: document.getElementById('extraChargeDesc').value, amountUSD: parseFloat(document.getElementById('extraChargeAmount').value)||0 },
       emergencyContact: document.getElementById('emergencyContact').value,
       totalPaidUSD: updatePriceAndBreakdown(),
       paymentMethod: document.getElementById('paymentMethod').value,
@@ -269,7 +319,7 @@
     bookings.push(booking);
     localStorage.setItem('medicalBookings', JSON.stringify(bookings));
     document.getElementById('confirmationBlock').style.display = 'block';
-    document.getElementById('bookingSummary').innerHTML = `Reservation: ${booking.id}<br>Name: ${booking.patient.fullName}<br>Total: $${booking.totalPaidUSD}<br>Status: Pending`;
+    document.getElementById('bookingSummary').innerHTML = `Reservation: ${booking.id}<br>Name: ${booking.patient.fullName}<br>Total paid: $${booking.totalPaidUSD}<br>Status: Pending confirmation`;
     document.getElementById('paypal-button-container').style.display = 'none';
     document.getElementById('bank-transfer-container').style.display = 'none';
     document.getElementById('printBtn').onclick = () => window.print();
@@ -282,7 +332,7 @@
     if (window.paypal && window.paypal.Buttons) {
       window.paypal.Buttons({
         createOrder: (data, actions) => {
-          if (!validateTab1() || !validateTab2()) { alert("Complete both tabs and accept terms"); return actions.reject(); }
+          if (!validateTab1() || !validateTab2()) { alert("Complete both tabs and accept terms."); return actions.reject(); }
           return actions.order.create({ purchase_units: [{ amount: { value: updatePriceAndBreakdown().toFixed(2), currency_code: "USD" } }] });
         },
         onApprove: (data, actions) => actions.order.capture().then(details => saveBookingAndConfirm(details.id)),
@@ -299,7 +349,7 @@
   }
 
   window.goToTab = function(tabNum) {
-    if (tabNum === 2 && !validateTab1()) { alert("Fill all required fields and upload photo."); return; }
+    if (tabNum === 2 && !validateTab1()) { alert("Please fill all required fields and upload photo."); return; }
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(`tab${tabNum}`).classList.add('active');
@@ -307,6 +357,7 @@
     if (tabNum === 2) { updatePriceAndBreakdown(); togglePaymentMethod(); }
   };
 
+  document.getElementById('email').addEventListener('input', updateRegistrationUI);
   document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('change', () => { if (document.getElementById('tab2').classList.contains('active')) updatePriceAndBreakdown(); }));
   document.getElementById('paymentMethod').addEventListener('change', togglePaymentMethod);
   document.getElementById('manualPaymentBtn').addEventListener('click', () => { if (validateTab1() && validateTab2()) saveBookingAndConfirm('MANUAL_BANK'); else alert("Complete both tabs and accept terms."); });
