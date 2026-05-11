@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Ceylon MediConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    body { background: #1e2f2a; font-family: 'Inter', sans-serif; padding: 2rem; }
+    .admin-container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 2rem; overflow: hidden; }
+    .admin-header { background: #006B4C; color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; flex-wrap: wrap; }
+    .logout-btn { background: rgba(255,255,255,0.2); border: none; padding: 0.5rem 1.2rem; border-radius: 40px; color: white; cursor: pointer; }
+    .stats { display: flex; gap: 2rem; padding: 1.5rem 2rem; background: #f4f9f6; flex-wrap: wrap; }
+    .stat-card { background: white; padding: 1rem 2rem; border-radius: 1.5rem; }
+    .booking-table, .pricing-section, .legal-section, .bank-section { padding: 1.5rem 2rem; border-top: 1px solid #e0ede6; }
+    .pricing-grid, .legal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 1rem; margin: 1rem 0; }
+    .price-item, .legal-item { background: #fefcf5; padding: 0.8rem; border-radius: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .price-item input, .legal-item textarea { width: 140px; padding: 6px; border-radius: 30px; border: 1px solid #ccc; }
+    .legal-item textarea { width: 100%; }
+    button.save-btn { background: #009E6B; color: white; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; margin-top: 1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid #e2ece6; }
+    th { background: #eaf6f0; }
+    .status-badge { padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; }
+    .status-pending { background: #ffe6b3; color: #a16500; }
+    .status-confirmed { background: #c8f0e1; color: #006B4C; }
+    button.confirm-btn { background: #009E6B; border: none; color: white; padding: 4px 12px; border-radius: 30px; cursor: pointer; }
+    .export-btn { background: #1C4E3F; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; margin-left: 1rem; }
+    .login-screen { max-width: 400px; margin: 100px auto; background: white; padding: 2rem; border-radius: 2rem; text-align: center; }
+    .hidden { display: none; }
+    footer { text-align: center; padding: 1rem; font-size: 0.7rem; background: #f8fbf9; }
+  </style>
+</head>
+<body>
+<div id="loginDiv" class="login-screen">
+  <i class="fas fa-shield-alt" style="font-size: 3rem; color:#006B4C;"></i>
+  <h2>Admin Login</h2>
+  <input type="password" id="adminPassword" placeholder="Enter password">
+  <button id="loginBtn" style="background:#006B4C; color:white; padding:10px; width:100%; border-radius:40px;">Login</button>
+  <p style="margin-top:1rem;">Default: <strong>admin123</strong></p>
+</div>
+
+<div id="adminPanel" class="admin-container hidden">
+  <div class="admin-header"><h2>Ceylon MediConnect Admin</h2><button id="logoutBtnAdmin" class="logout-btn">Logout</button></div>
+  
+  <div class="stats"><div class="stat-card"><strong>Total Bookings</strong><br><span id="totalCount">0</span></div><div class="stat-card"><strong>Pending</strong><br><span id="pendingCount">0</span></div><div class="stat-card"><strong>Confirmed</strong><br><span id="confirmedCount">0</span></div><div><button id="exportCsvBtn" class="export-btn">Export CSV</button></div></div>
+  
+  <div class="booking-table"><table id="bookingsTable"><thead><tr><th>ID</th><th>Patient</th><th>Email</th><th>Treatment</th><th>Hospital</th><th>Total ($)</th><th>Status</th><th>Action</th></thead><tbody id="bookingsTbody"></tbody></table></div>
+  
+  <div class="pricing-section"><h3>💰 Dynamic Pricing (USD)</h3><div class="pricing-grid" id="pricingForm"></div><button id="savePricingBtn" class="save-btn">Save Pricing</button> <span id="pricingMsg"></span></div>
+  
+  <div class="legal-section"><h3>⚖️ Legal Terms (Death & Liability)</h3><div class="legal-grid"><div class="legal-item"><label>Death procedure:</label><textarea id="deathProcedure" rows="3" style="width:100%"></textarea></div><div class="legal-item"><label>Cost liability:</label><textarea id="costLiability" rows="3" style="width:100%"></textarea></div></div><button id="saveLegalBtn" class="save-btn">Save Legal Terms</button> <span id="legalMsg"></span></div>
+  
+  <div class="bank-section"><h3>🏦 Bank Transfer Details</h3><div class="pricing-grid"><div class="price-item"><label>Account Name</label><input id="bankAccountName"></div><div class="price-item"><label>Bank Name</label><input id="bankName"></div><div class="price-item"><label>Account Number</label><input id="bankAccountNumber"></div><div class="price-item"><label>SWIFT Code</label><input id="bankSwift"></div><div class="price-item"><label>Currency</label><input id="bankCurrency" value="USD"></div></div><button id="saveBankBtn" class="save-btn">Save Bank Details</button> <span id="bankMsg"></span></div>
+  
+  <footer>© 2026 Ceylon MediConnect. Developed by Pesala Jayawardene</footer>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = "admin123";
+  let bookings = [];
+  const defaultPricing = { baseAdminFee:450, flightEconomy:600, flightBusiness:1350, hotelStandard:70, hotelDeluxe:140, hotelLuxury:260, companionExtraHotel:35, transferFlat:95, dailyLocalTransport:25, mealPlanPerPersonPerDay:32, visaAssistance:70, companionHandling:80, airportAmbulanceFee:150, airportDoctorFee:300 };
+  const defaultLegal = { deathProcedure: "In case of death, next of kin notified. Repatriation arranged by Ceylon MediConnect at family's expense. All costs borne by patient's family or insurance.", costLiability: "Medical and repatriation costs are patient's responsibility. Package covers only pre-agreed travel/accommodation." };
+  const defaultBank = { accountName: "Ceylon MediConnect (Pvt) Ltd", bankName: "Commercial Bank of Ceylon", accountNumber: "123-456-7890", swiftCode: "CCEYLKLX", currency: "USD" };
+
+  function loadPricingForm() {
+    let pricing = JSON.parse(localStorage.getItem('ceylonPricing') || JSON.stringify(defaultPricing));
+    const container = document.getElementById('pricingForm');
+    container.innerHTML = '';
+    for (let key in defaultPricing) {
+      let div = document.createElement('div'); div.className = 'price-item';
+      div.innerHTML = `<label>${key.replace(/([A-Z])/g,' $1')}</label><input type="number" id="price_${key}" value="${pricing[key]}" step="5">`;
+      container.appendChild(div);
+    }
+  }
+  function savePricing() {
+    let updated = {};
+    for (let key in defaultPricing) updated[key] = parseFloat(document.getElementById(`price_${key}`).value);
+    localStorage.setItem('ceylonPricing', JSON.stringify(updated));
+    document.getElementById('pricingMsg').innerText = '✓ Saved';
+    setTimeout(() => document.getElementById('pricingMsg').innerText = '', 1500);
+  }
+  function loadLegalForm() {
+    let legal = JSON.parse(localStorage.getItem('ceylonLegal') || JSON.stringify(defaultLegal));
+    document.getElementById('deathProcedure').value = legal.deathProcedure;
+    document.getElementById('costLiability').value = legal.costLiability;
+  }
+  function saveLegal() {
+    let legal = { deathProcedure: document.getElementById('deathProcedure').value, costLiability: document.getElementById('costLiability').value };
+    localStorage.setItem('ceylonLegal', JSON.stringify(legal));
+    document.getElementById('legalMsg').innerText = '✓ Legal saved';
+    setTimeout(() => document.getElementById('legalMsg').innerText = '', 1500);
+  }
+  function loadBankForm() {
+    let bank = JSON.parse(localStorage.getItem('ceylonBank') || JSON.stringify(defaultBank));
+    document.getElementById('bankAccountName').value = bank.accountName;
+    document.getElementById('bankName').value = bank.bankName;
+    document.getElementById('bankAccountNumber').value = bank.accountNumber;
+    document.getElementById('bankSwift').value = bank.swiftCode;
+    document.getElementById('bankCurrency').value = bank.currency;
+  }
+  function saveBank() {
+    let bank = { accountName: document.getElementById('bankAccountName').value, bankName: document.getElementById('bankName').value, accountNumber: document.getElementById('bankAccountNumber').value, swiftCode: document.getElementById('bankSwift').value, currency: document.getElementById('bankCurrency').value };
+    localStorage.setItem('ceylonBank', JSON.stringify(bank));
+    document.getElementById('bankMsg').innerText = '✓ Bank saved';
+    setTimeout(() => document.getElementById('bankMsg').innerText = '', 1500);
+  }
+
+  function loadBookings() {
+    const stored = localStorage.getItem('medicalBookings');
+    bookings = stored ? JSON.parse(stored) : [];
+    renderBookings();
+  }
+  function renderBookings() {
+    const tbody = document.getElementById('bookingsTbody');
+    tbody.innerHTML = '';
+    let pending = 0, confirmed = 0;
+    bookings.forEach((b, idx) => {
+      if (b.status === 'pending') pending++;
+      if (b.status === 'confirmed') confirmed++;
+      const row = tbody.insertRow();
+      row.innerHTML = `
+        <td>${b.id || 'N/A'}</td>
+        <td>${b.patient?.fullName || ''}</td>
+        <td>${b.patient?.email || ''}</td>
+        <td>${(b.patient?.treatment || '').substring(0,30)}</td>
+        <td>${b.travel?.hospital || ''}</td>
+        <td>$${b.totalPaidUSD || 0}</td>
+        <td><span class="status-badge status-${b.status === 'confirmed' ? 'confirmed' : 'pending'}">${b.status.toUpperCase()}</span></td>
+        <td>${b.status === 'pending' ? `<button class="confirm-btn" data-idx="${idx}">Confirm</button>` : '✔️'}</td>
+      `;
+    });
+    document.getElementById('totalCount').innerText = bookings.length;
+    document.getElementById('pendingCount').innerText = pending;
+    document.getElementById('confirmedCount').innerText = confirmed;
+    document.querySelectorAll('.confirm-btn').forEach(btn => btn.addEventListener('click', () => {
+      let idx = btn.dataset.idx;
+      if (bookings[idx]) {
+        bookings[idx].status = 'confirmed';
+        localStorage.setItem('medicalBookings', JSON.stringify(bookings));
+        renderBookings();
+      }
+    }));
+  }
+  function exportCSV() {
+    let rows = [["ID","Patient","Email","Treatment","Hospital","Arrival","Departure","Total","Status","Insurance","Airport Medical"]];
+    bookings.forEach(b => {
+      rows.push([b.id, b.patient?.fullName, b.patient?.email, b.patient?.treatment, b.travel?.hospital, b.travel?.arrivalDate, b.travel?.departureDate, b.totalPaidUSD, b.status, `${b.patient?.insuranceProvider || ''} ${b.patient?.insurancePolicy || ''}`, b.travel?.airportMedical]);
+    });
+    const csv = rows.map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "bookings.csv";
+    a.click();
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
+      document.getElementById('loginDiv').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      loadPricingForm(); loadLegalForm(); loadBankForm(); loadBookings();
+    } else alert("Wrong password");
+  });
+  document.getElementById('logoutBtnAdmin').addEventListener('click', () => {
+    document.getElementById('loginDiv').classList.remove('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+  });
+  document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+  document.getElementById('savePricingBtn').addEventListener('click', savePricing);
+  document.getElementById('saveLegalBtn').addEventListener('click', saveLegal);
+  document.getElementById('saveBankBtn').addEventListener('click', saveBank);
+</script>
+</body>
+</html>
