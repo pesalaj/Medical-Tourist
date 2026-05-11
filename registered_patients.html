@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registered Patients | Ceylon MediConnect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    body { background: #f0f7f3; font-family: 'Inter', sans-serif; padding: 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 2rem; overflow: hidden; box-shadow: 0 20px 35px -12px rgba(0,32,20,0.15); }
+    .header { background: #006B4C; color: white; padding: 1.5rem 2rem; }
+    .patient-list { padding: 2rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e0ede6; }
+    th { background: #eaf6f0; font-weight: 600; }
+    .patient-row { cursor: pointer; transition: 0.2s; }
+    .patient-row:hover { background: #f4fbf8; }
+    .countdown { font-weight: bold; }
+    .expired { color: #b34e00; }
+    .active { color: #006B4C; }
+    .lifetime { color: #009E6B; font-weight: bold; }
+    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index:1000; }
+    .modal-content { background: white; max-width: 700px; width: 90%; border-radius: 2rem; padding: 2rem; max-height: 80vh; overflow-y: auto; }
+    .close { float: right; font-size: 1.5rem; cursor: pointer; }
+    footer { text-align: center; padding: 1rem; font-size: 0.7rem; color: #5f8377; background: #f8fbf9; }
+    .back-link { display: inline-block; margin-bottom: 1rem; color: #006B4C; text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h2><i class="fas fa-users"></i> Registered patients list</h2>
+    <a href="index.html" class="back-link" style="color:white; text-decoration:underline;">← Back to patient booking</a>
+  </div>
+  <div class="patient-list">
+    <table id="patientsTable">
+      <thead><tr><th>Email</th><th>Registration type</th><th>Status / countdown</th><th>Actions</th></tr></thead>
+      <tbody id="patientsTbody"></tbody>
+    </table>
+  </div>
+  <footer>© 2026 Ceylon MediConnect. Developed by Pesala Jayawardene</footer>
+</div>
+
+<!-- Modal for patient details -->
+<div id="patientModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3 id="modalTitle">Patient details</h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+  let registrations = [];
+  let allBookings = [];
+
+  function loadData() {
+    registrations = JSON.parse(localStorage.getItem('registeredPatients') || '[]');
+    allBookings = JSON.parse(localStorage.getItem('medicalBookings') || '[]');
+    renderPatientList();
+  }
+
+  function getDaysRemaining(expiryDateStr) {
+    if (!expiryDateStr) return null;
+    const expiry = new Date(expiryDateStr);
+    const now = new Date();
+    const diff = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+    return diff;
+  }
+
+  function renderPatientList() {
+    const tbody = document.getElementById('patientsTbody');
+    tbody.innerHTML = '';
+    registrations.forEach(reg => {
+      const row = tbody.insertRow();
+      row.classList.add('patient-row');
+      row.onclick = () => showPatientDetails(reg.email);
+      let statusHtml = '';
+      if (reg.type === 'lifetime') {
+        statusHtml = '<span class="lifetime"><i class="fas fa-infinity"></i> Lifetime</span>';
+      } else {
+        const days = getDaysRemaining(reg.expiryDate);
+        if (days === null || days < 0) statusHtml = '<span class="expired"><i class="fas fa-exclamation-triangle"></i> Expired</span>';
+        else statusHtml = `<span class="active"><i class="fas fa-hourglass-half"></i> ${days} days left</span>`;
+      }
+      row.innerHTML = `
+        <td>${reg.email}</td>
+        <td>${reg.type === 'annual' ? 'Annual ($99/year)' : 'Lifetime ($999)'}</td>
+        <td>${statusHtml}</td>
+        <td><button onclick="event.stopPropagation();showPatientDetails('${reg.email}')">View details</button></td>
+      `;
+    });
+    if (registrations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No registered patients yet.</td></tr>';
+    }
+  }
+
+  function getPatientVisits(email) {
+    return allBookings.filter(b => b.patient?.email?.toLowerCase() === email.toLowerCase()).sort((a,b) => new Date(b.travel?.arrivalDate) - new Date(a.travel?.arrivalDate));
+  }
+
+  function showPatientDetails(email) {
+    const patientReg = registrations.find(r => r.email.toLowerCase() === email.toLowerCase());
+    const visits = getPatientVisits(email);
+    const patientBooking = allBookings.find(b => b.patient?.email?.toLowerCase() === email.toLowerCase());
+    const patientInfo = patientBooking?.patient || {};
+    let historyHtml = `<p><strong>Email:</strong> ${email}</p>`;
+    historyHtml += `<p><strong>Registration type:</strong> ${patientReg?.type === 'annual' ? 'Annual (expires ' + new Date(patientReg.expiryDate).toDateString() + ')' : 'Lifetime'}</p>`;
+    historyHtml += `<hr><h4>Past visits to Sri Lanka (${visits.length} total)</h4>`;
+    if (visits.length === 0) {
+      historyHtml += '<p>No previous visits recorded.</p>';
+    } else {
+      historyHtml += '<ul>';
+      visits.forEach((v, idx) => {
+        historyHtml += `<li><strong>Visit ${idx+1}:</strong> ${v.travel?.arrivalDate} to ${v.travel?.departureDate} – Hospital: ${v.travel?.hospital}<br>
+        Treatment: ${v.patient?.treatment}<br>
+        Total paid: $${v.totalPaidUSD}<br>
+        <em>Medical notes: ${v.patient?.diagnosis}</em></li>`;
+      });
+      historyHtml += '</ul>';
+    }
+    historyHtml += `<hr><h4>Medical history summary (from latest booking)</h4>`;
+    if (patientInfo.diagnosis) historyHtml += `<p><strong>Primary diagnosis:</strong> ${patientInfo.diagnosis}</p>`;
+    if (patientInfo.treatment) historyHtml += `<p><strong>Treatments received:</strong> ${patientInfo.treatment}</p>`;
+    if (patientInfo.insuranceProvider) historyHtml += `<p><strong>Insurance:</strong> ${patientInfo.insuranceProvider} ${patientInfo.insurancePolicy || ''}</p>`;
+    document.getElementById('modalTitle').innerText = `Patient: ${patientInfo.fullName || email}`;
+    document.getElementById('modalBody').innerHTML = historyHtml;
+    document.getElementById('patientModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('patientModal').style.display = 'none';
+  }
+  window.closeModal = closeModal;
+
+  loadData();
+  // Auto-refresh countdown every minute
+  setInterval(() => { renderPatientList(); }, 60000);
+</script>
+</body>
+</html>
