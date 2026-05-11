@@ -43,6 +43,8 @@
     .registration-info { background: #e0f2e9; padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; }
     .picture-placeholder { text-align: center; margin-top: 1rem; }
     .picture-placeholder img { max-width: 100%; border-radius: 1rem; }
+    .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index:1000; }
+    .modal-content { background: white; max-width: 500px; padding: 2rem; border-radius: 2rem; text-align: center; }
     @media (max-width:780px) { .tab-content { padding: 1rem; } }
   </style>
 </head>
@@ -65,14 +67,14 @@
         <!-- Column 1: Patient & Medical -->
         <div class="form-section">
           <h3><i class="fas fa-user-md"></i> Patient & Medical</h3>
-          <div class="input-group"><label><i class="fas fa-user"></i> Full name *</label><input type="text" id="fullName"></div>
+          <div class="input-group"><label><i class="fas fa-user"></i> Full name *</label><input type="text" id="fullName" placeholder="E.g., John Smith"></div>
           <div class="row-2col"><div><label>Date of birth *</label><input type="date" id="dob"></div><div><label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select></div></div>
-          <div class="row-2col"><div><label>Nationality</label><input id="nationality"></div><div><label>Passport number</label><input id="passport"></div></div>
-          <div class="row-2col"><div><label>Email address *</label><input type="email" id="email"></div><div><label>Phone number</label><input id="phone"></div></div>
-          <div class="input-group"><label>Primary diagnosis *</label><textarea id="diagnosis" rows="2"></textarea></div>
-          <div class="input-group"><label>Required treatment *</label><textarea id="treatmentReq" rows="2"></textarea></div>
-          <div class="input-group"><label>Insurance provider</label><input id="insuranceProvider"></div>
-          <div class="input-group"><label>Insurance policy number</label><input id="insurancePolicy"></div>
+          <div class="row-2col"><div><label>Nationality</label><input id="nationality" placeholder="E.g., American"></div><div><label>Passport number</label><input id="passport" placeholder="E.g., A12345678"></div></div>
+          <div class="row-2col"><div><label>Email address *</label><input type="email" id="email" placeholder="patient@example.com"></div><div><label>Phone number</label><input id="phone" placeholder="+1 234 567 8900"></div></div>
+          <div class="input-group"><label>Primary diagnosis *</label><textarea id="diagnosis" rows="2" placeholder="E.g., Coronary artery disease, Osteoarthritis"></textarea></div>
+          <div class="input-group"><label>Required treatment *</label><textarea id="treatmentReq" rows="2" placeholder="E.g., Bypass surgery, Knee replacement"></textarea></div>
+          <div class="input-group"><label>Insurance provider</label><input id="insuranceProvider" placeholder="E.g., Allianz, Cigna"></div>
+          <div class="input-group"><label>Insurance policy number</label><input id="insurancePolicy" placeholder="E.g., POL-123456"></div>
           <div class="input-group"><label><i class="fas fa-camera"></i> Upload patient photo *</label><input type="file" id="patientPhoto" accept="image/*"><img id="photoPreview" class="photo-preview" style="display:none;"></div>
         </div>
 
@@ -105,11 +107,11 @@
         <!-- Column 3: Other charges + picture -->
         <div class="form-section">
           <h3><i class="fas fa-plus-circle"></i> Other charges & notes</h3>
-          <div class="input-group"><label>Description of additional charge</label><input id="extraChargeDesc" placeholder="E.g., special wheelchair, extra medication"></div>
-          <div class="input-group"><label>Amount (usd)</label><input type="number" id="extraChargeAmount" step="10" value="0"></div>
-          <div class="input-group"><label>Special requests (diet, mobility)</label><textarea id="specialReq" rows="3"></textarea></div>
+          <div class="input-group"><label>Description of additional charge</label><input id="extraChargeDesc" placeholder="E.g., Special wheelchair, extra medication"></div>
+          <div class="input-group"><label>Amount (usd)</label><input type="number" id="extraChargeAmount" step="10" value="0" placeholder="0"></div>
+          <div class="input-group"><label>Special requests (diet, mobility)</label><textarea id="specialReq" rows="3" placeholder="E.g., Wheelchair access, halal meals"></textarea></div>
           <div class="picture-placeholder">
-            <img src="https://cdn.pixabay.com/photo/2020/06/03/11/19/medical-5253591_640.png" alt="Medical tourism illustration" style="max-width:100%; border-radius:1rem;">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'%3E%3Crect width='800' height='400' fill='%23e0f2e9'/%3E%3Ctext x='400' y='200' font-size='24' text-anchor='middle' fill='%23006B4C'%3E🏥 Medical tourism to Sri Lanka%3C/text%3E%3C/svg%3E" alt="Medical tourism illustration">
             <p style="font-size:0.7rem; margin-top:5px;">Compassionate care, every step of the way</p>
           </div>
         </div>
@@ -125,13 +127,13 @@
       <div class="footer-buttons"><button class="next-btn" onclick="goToTab(2)">Proceed to legal & payment →</button></div>
     </div>
 
-    <!-- Tab 2: Legal, Emergency & Payment -->
+    <!-- Tab 2: Legal, Emergency & Payment (always viewable, payment requires validation) -->
     <div id="tab2" class="tab-content">
       <div class="form-grid">
         <div class="form-section">
           <h3><i class="fas fa-phone-alt"></i> Emergency contacts</h3>
-          <div class="input-group"><label>Emergency contact name & relation</label><input id="emergencyContact"></div>
-          <div class="input-group"><label>Emergency phone number</label><input id="emergencyPhone"></div>
+          <div class="input-group"><label>Emergency contact name & relation</label><input id="emergencyContact" placeholder="E.g., Mary Smith (Wife)"></div>
+          <div class="input-group"><label>Emergency phone number</label><input id="emergencyPhone" placeholder="E.g., +1 987 654 3210"></div>
           <div class="input-group"><label>Preferred contact method</label><select id="contactMethod"><option>WhatsApp</option><option>Email</option><option>Phone</option></select></div>
         </div>
         <div class="form-section">
@@ -158,8 +160,17 @@
   <footer>© 2026 Ceylon Medicconnect. Developed by Pesala Jayawardene</footer>
 </div>
 
+<!-- Modal for PayPal registration -->
+<div id="paypalModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closePaypalModal()">&times;</span>
+    <h3>Complete registration payment</h3>
+    <div id="paypalRegistrationContainer"></div>
+  </div>
+</div>
+
 <script>
-  // Pricing & legal config (same as before)
+  // Pricing & legal config
   const defaultPricing = { baseAdminFee:450, flightEconomy:600, flightBusiness:1350, hotelStandard:70, hotelDeluxe:140, hotelLuxury:260, companionExtraHotel:35, transferFlat:95, dailyLocalTransport:25, mealPlanPerPersonPerDay:32, visaAssistance:70, companionHandling:80, airportAmbulanceFee:150, airportDoctorFee:300, bystanderDailyFeeUSD:22 };
   const defaultLegal = { deathProcedure: "In case of death, next of kin notified. Repatriation arranged at family's expense. All costs borne by patient's family or insurance.", costLiability: "Medical and repatriation costs are patient's responsibility. Package covers only pre-agreed travel/accommodation." };
   const defaultBank = { accountName: "Ceylon Medicconnect (Pvt) Ltd", bankName: "Commercial Bank of Ceylon", accountNumber: "123-456-7890", swiftCode: "CCEYLKLX", currency: "USD" };
@@ -190,7 +201,7 @@
     if (found) {
       if (found.type === 'lifetime') return { type: 'lifetime', discountPerVisit: 35, expiryDate: null };
       if (found.type === 'annual' && new Date(found.expiryDate) > new Date()) return { type: 'annual', discountPerVisit: 30, expiryDate: found.expiryDate };
-      return null; // expired
+      return null;
     }
     return null;
   }
@@ -224,11 +235,15 @@
     const amount = type === 'annual' ? 99 : 999;
     const email = document.getElementById('email').value.trim();
     if (!email) { alert("Please enter your email first."); return; }
-    if (confirm(`Pay $${amount} for ${type === 'annual' ? '1‑year registration' : 'lifetime registration'}? Payment will be processed via PayPal.`)) {
-      // Use PayPal to charge registration fee
-      const orderData = { purchase_units: [{ amount: { value: amount.toString(), currency_code: "USD" }, description: `${type} registration for ${email}` }] };
-      paypal.Buttons({
-        createOrder: (data, actions) => actions.order.create(orderData),
+    const modal = document.getElementById('paypalModal');
+    const container = document.getElementById('paypalRegistrationContainer');
+    container.innerHTML = '';
+    modal.style.display = 'flex';
+    if (window.paypal && window.paypal.Buttons) {
+      window.paypal.Buttons({
+        createOrder: (data, actions) => actions.order.create({
+          purchase_units: [{ amount: { value: amount.toString(), currency_code: "USD" }, description: `${type} registration for ${email}` }]
+        }),
         onApprove: (data, actions) => actions.order.capture().then(details => {
           const registrations = JSON.parse(localStorage.getItem('registeredPatients') || '[]');
           const existingIndex = registrations.findIndex(r => r.email.toLowerCase() === email.toLowerCase());
@@ -238,15 +253,27 @@
           else registrations.push(newReg);
           localStorage.setItem('registeredPatients', JSON.stringify(registrations));
           alert(`Registration successful! You now receive ${type === 'annual' ? '$30' : '$35'} discount on each booking.`);
-          checkRegistrationByEmail(email);
           updateRegistrationUI();
+          modal.style.display = 'none';
         }),
         onError: () => alert("Payment failed")
-      }).render('#regActions');
+      }).render('#paypalRegistrationContainer');
+    } else {
+      container.innerHTML = '<p class="error">PayPal SDK not loaded.</p>';
     }
   }
 
-  function calculateNights() { /* same */ const s=new Date(document.getElementById('arrivalDate').value), e=new Date(document.getElementById('departureDate').value); if(isNaN(s)||isNaN(e)||s>=e) return 0; return Math.ceil((e-s)/(86400000)); }
+  function closePaypalModal() {
+    document.getElementById('paypalModal').style.display = 'none';
+  }
+  window.closePaypalModal = closePaypalModal;
+
+  function calculateNights() {
+    const start = new Date(document.getElementById('arrivalDate').value);
+    const end = new Date(document.getElementById('departureDate').value);
+    if (isNaN(start) || isNaN(end) || start >= end) return 0;
+    return Math.ceil((end - start) / (1000*60*60*24));
+  }
 
   function updatePriceAndBreakdown() {
     let total = pricing.baseAdminFee;
@@ -267,7 +294,6 @@
     if (bystander==='yes' && nights>0) { total += pricing.bystanderDailyFeeUSD*nights; breakdown.push(`👩‍⚕️ Bystander nurse: $${pricing.bystanderDailyFeeUSD}/day`); }
     const extra = parseFloat(document.getElementById('extraChargeAmount').value)||0;
     if (extra>0) { total += extra; breakdown.push(`➕ Other charges: $${extra}`); }
-    // Apply registration discount
     if (currentRegistration) {
       const discount = currentRegistration.discountPerVisit;
       total = Math.max(0, total - discount);
@@ -284,6 +310,7 @@
     if (file) { const reader = new FileReader(); reader.onload = ev => { photoBase64 = ev.target.result; document.getElementById('photoPreview').src = photoBase64; document.getElementById('photoPreview').style.display = 'block'; }; reader.readAsDataURL(file); }
   });
 
+  // Validation for tab1 (required for payment)
   function validateTab1() {
     const name = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
@@ -332,7 +359,7 @@
     if (window.paypal && window.paypal.Buttons) {
       window.paypal.Buttons({
         createOrder: (data, actions) => {
-          if (!validateTab1() || !validateTab2()) { alert("Complete both tabs and accept terms."); return actions.reject(); }
+          if (!validateTab1() || !validateTab2()) { alert("Complete all required fields in both tabs and accept terms."); return actions.reject(); }
           return actions.order.create({ purchase_units: [{ amount: { value: updatePriceAndBreakdown().toFixed(2), currency_code: "USD" } }] });
         },
         onApprove: (data, actions) => actions.order.capture().then(details => saveBookingAndConfirm(details.id)),
@@ -349,7 +376,7 @@
   }
 
   window.goToTab = function(tabNum) {
-    if (tabNum === 2 && !validateTab1()) { alert("Please fill all required fields and upload photo."); return; }
+    // No validation to block viewing tab2 – user can freely see legal terms
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(`tab${tabNum}`).classList.add('active');
@@ -357,10 +384,11 @@
     if (tabNum === 2) { updatePriceAndBreakdown(); togglePaymentMethod(); }
   };
 
+  // Event listeners
   document.getElementById('email').addEventListener('input', updateRegistrationUI);
   document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('change', () => { if (document.getElementById('tab2').classList.contains('active')) updatePriceAndBreakdown(); }));
   document.getElementById('paymentMethod').addEventListener('change', togglePaymentMethod);
-  document.getElementById('manualPaymentBtn').addEventListener('click', () => { if (validateTab1() && validateTab2()) saveBookingAndConfirm('MANUAL_BANK'); else alert("Complete both tabs and accept terms."); });
+  document.getElementById('manualPaymentBtn').addEventListener('click', () => { if (validateTab1() && validateTab2()) saveBookingAndConfirm('MANUAL_BANK'); else alert("Complete all required fields and accept terms."); });
 
   updatePriceAndBreakdown();
   togglePaymentMethod();
