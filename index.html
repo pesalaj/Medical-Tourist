@@ -2,129 +2,280 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard | Ceylon MediConnect</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Ceylon MediConnect | Book Your Medical Journey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://www.paypal.com/sdk/js?client-id=AUjpHWkOBpcPOVD3WtMLqq06t6Il1hWuzvKY5AEJMGp_Kb7TvNfXtwRQl9c91zSJsIDndwXlMvUnOv02&currency=USD"></script>
   <style>
-    * { margin:0; padding:0; box-sizing: border-box; }
-    body { background: #1e2f2a; font-family: 'Inter', sans-serif; padding: 2rem; }
-    .admin-container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 2rem; overflow: hidden; }
-    .admin-header { background: #006B4C; color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-    .logout-btn { background: rgba(255,255,255,0.2); border: none; padding: 0.5rem 1.2rem; border-radius: 40px; color: white; cursor: pointer; }
-    .stats { display: flex; gap: 2rem; padding: 1.5rem 2rem; background: #f4f9f6; flex-wrap: wrap; }
-    .stat-card { background: white; padding: 1rem 2rem; border-radius: 1.5rem; }
-    .booking-table, .pricing-section, .legal-section, .bank-section { padding: 1.5rem 2rem; border-top: 1px solid #e0ede6; }
-    .pricing-grid, .legal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 1rem; margin: 1rem 0; }
-    .price-item, .legal-item { background: #fefcf5; padding: 0.8rem; border-radius: 1rem; border: 1px solid #e0ede6; display: flex; justify-content: space-between; align-items: center; }
-    .price-item input, .legal-item input, .legal-item textarea { width: 140px; padding: 6px; border-radius: 30px; border: 1px solid #ccc; }
-    .legal-item textarea { width: 100%; margin-top: 8px; }
-    button.save-btn { background: #009E6B; color: white; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; margin-top: 1rem; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid #e2ece6; }
-    th { background: #eaf6f0; }
-    .status-badge { padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; }
-    .status-pending { background: #ffe6b3; color: #a16500; }
-    .status-confirmed { background: #c8f0e1; color: #006B4C; }
-    button.confirm-btn { background: #009E6B; border: none; color: white; padding: 4px 12px; border-radius: 30px; cursor: pointer; }
-    .export-btn { background: #1C4E3F; color: white; border: none; padding: 0.5rem 1rem; border-radius: 40px; cursor: pointer; margin-left: 1rem; }
-    .login-screen { max-width: 400px; margin: 100px auto; background: white; padding: 2rem; border-radius: 2rem; text-align: center; }
-    .hidden { display: none; }
-    footer { text-align: center; padding: 1rem; font-size: 0.7rem; background: #f8fbf9; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f0f7f3; padding: 2rem 1.5rem; }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .hero { text-align: center; margin-bottom: 2rem; }
+    .hero h1 { font-size: 2rem; background: linear-gradient(135deg, #006B4C, #009E6B); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .booking-card { background: white; border-radius: 2rem; box-shadow: 0 20px 35px -12px rgba(0,32,20,0.15); overflow: hidden; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2rem; padding: 2rem; }
+    .form-section { background: #FEFCF5; padding: 1.2rem 1.5rem; border-radius: 1.5rem; border: 1px solid #e0ede6; }
+    .form-section h3 { margin-bottom: 1rem; border-left: 5px solid #009E6B; padding-left: 0.9rem; }
+    .input-group { margin-bottom: 1rem; display: flex; flex-direction: column; }
+    .input-group label { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 6px; }
+    input, select, textarea { padding: 12px; border-radius: 16px; border: 1.5px solid #dde8e2; font-family: inherit; }
+    .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .price-panel { background: #EBF6F1; border-radius: 1.5rem; padding: 1.2rem; margin: 0 2rem 1rem 2rem; }
+    .total-price { font-size: 1.8rem; font-weight: 800; color: #006B4C; display: flex; justify-content: space-between; border-top: 2px dashed #bdd9ce; margin-top: 12px; padding-top: 12px; }
+    .paypal-button-container, .bank-transfer-container { margin: 20px 2rem 2rem; }
+    .bank-details { background: #f9f2e0; padding: 1rem; border-radius: 1rem; margin-top: 1rem; }
+    .alert-message { margin: 0 2rem; background: #fff1e0; border-left: 5px solid #f4a261; padding: 12px; border-radius: 16px; }
+    .confirmation-card { background: #e9f7ef; border-radius: 1.5rem; padding: 1.2rem; margin: 0 2rem 2rem; display: none; }
+    footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: #5f8377; }
+    .admin-link { text-align: center; margin: 1rem 0; }
+    .print-btn { background: #1C4E3F; color: white; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; margin-top: 10px; }
+    .legal-text { font-size: 0.8rem; background: #faf3e0; padding: 0.8rem; border-radius: 1rem; margin-top: 10px; }
+    .checkbox-group { display: flex; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
   </style>
 </head>
 <body>
-<div id="loginDiv" class="login-screen">
-  <i class="fas fa-shield-alt" style="font-size: 3rem; color:#006B4C;"></i>
-  <h2>Admin Login</h2>
-  <input type="password" id="adminPassword" placeholder="Enter password">
-  <button id="loginBtn" style="background:#006B4C; color:white; padding:10px; width:100%; border-radius:40px;">Login</button>
-  <p style="margin-top:1rem;">Default: <strong>admin123</strong></p>
-</div>
+<div class="container">
+  <div class="hero">
+    <h1><i class="fas fa-hands-helping"></i> Ceylon MediConnect</h1>
+    <p>Premium door-to-door medical care | Sri Lanka's top hospitals</p>
+  </div>
 
-<div id="adminPanel" class="admin-container hidden">
-  <div class="admin-header"><h2>Ceylon MediConnect Admin</h2><button id="logoutBtnAdmin" class="logout-btn">Logout</button></div>
-  
-  <div class="stats"><div class="stat-card"><strong>Total Bookings</strong><br><span id="totalCount">0</span></div><div class="stat-card"><strong>Pending</strong><br><span id="pendingCount">0</span></div><div class="stat-card"><strong>Confirmed</strong><br><span id="confirmedCount">0</span></div><div><button id="exportCsvBtn" class="export-btn">Export CSV</button></div></div>
-  
-  <div class="booking-table"><table id="bookingsTable"><thead><tr><th>ID</th><th>Patient</th><th>Email</th><th>Treatment</th><th>Hospital</th><th>Total ($)</th><th>Status</th><th>Action</th></tr></thead><tbody id="bookingsTbody"></tbody></table></div>
-  
-  <!-- Pricing Configuration -->
-  <div class="pricing-section"><h3>💰 Dynamic Pricing (USD)</h3><div class="pricing-grid" id="pricingForm"></div><button id="savePricingBtn" class="save-btn">Save Pricing</button><span id="pricingMsg"></span></div>
-  
-  <!-- Legal Terms (Death & Liability) -->
-  <div class="legal-section"><h3>⚖️ Legal Terms (Death procedure & Cost liability)</h3><div class="legal-grid"><div class="legal-item"><label>Death procedure text:</label><textarea id="deathProcedure" rows="3" style="width:100%"></textarea></div><div class="legal-item"><label>Cost liability text:</label><textarea id="costLiability" rows="3" style="width:100%"></textarea></div></div><button id="saveLegalBtn" class="save-btn">Save Legal Terms</button><span id="legalMsg"></span></div>
-  
-  <!-- Bank Transfer Details -->
-  <div class="bank-section"><h3>🏦 Bank Transfer Details</h3><div class="pricing-grid"><div class="price-item"><label>Account Name</label><input id="bankAccountName"></div><div class="price-item"><label>Bank Name</label><input id="bankName"></div><div class="price-item"><label>Account Number</label><input id="bankAccountNumber"></div><div class="price-item"><label>SWIFT Code</label><input id="bankSwift"></div><div class="price-item"><label>Currency</label><input id="bankCurrency" value="USD"></div></div><button id="saveBankBtn" class="save-btn">Save Bank Details</button><span id="bankMsg"></span></div>
-  
+  <div class="booking-card">
+    <div class="form-grid">
+      <!-- Column 1: Patient & Medical -->
+      <div class="form-section">
+        <h3><i class="fas fa-user-md"></i> Patient & Medical</h3>
+        <div class="input-group"><label>Full Name *</label><input type="text" id="fullName"></div>
+        <div class="row-2col"><div><label>DOB</label><input type="date" id="dob"></div><div><label>Gender</label><select id="gender"><option>Male</option><option>Female</option></select></div></div>
+        <div class="row-2col"><div><label>Nationality</label><input id="nationality"></div><div><label>Passport</label><input id="passport"></div></div>
+        <div class="row-2col"><div><label>Email *</label><input type="email" id="email"></div><div><label>Phone</label><input id="phone"></div></div>
+        <div class="input-group"><label>Diagnosis *</label><textarea id="diagnosis" rows="2"></textarea></div>
+        <div class="input-group"><label>Required Treatment *</label><textarea id="treatmentReq" rows="2"></textarea></div>
+        <div class="input-group"><label>Insurance Provider</label><input id="insuranceProvider" placeholder="e.g., Allianz"></div>
+        <div class="input-group"><label>Insurance Policy Number</label><input id="insurancePolicy"></div>
+      </div>
+
+      <!-- Column 2: Hospital & Travel + special services -->
+      <div class="form-section">
+        <h3><i class="fas fa-hospital-user"></i> Hospital & Travel</h3>
+        <div class="input-group"><label>Preferred Hospital</label><select id="hospital"><option>Nawaloka Hospital</option><option>Asiri Surgical</option><option>Lanka Hospitals</option></select></div>
+        <div class="row-2col"><div><label>Arrival Date</label><input type="date" id="arrivalDate"></div><div><label>Departure Date</label><input type="date" id="departureDate"></div></div>
+        <div class="input-group"><label>Companions (0-4)</label><input type="number" id="companions" min="0" max="4" value="1"></div>
+        <div class="row-2col"><div><label>Flight class</label><select id="flightClass"><option value="economy">Economy</option><option value="business">Business</option></select></div><div><label>Hotel tier</label><select id="hotelTier"><option value="standard">Standard</option><option value="deluxe" selected>Deluxe</option><option value="luxury">Luxury</option></select></div></div>
+        <div class="checkbox-group">
+          <label><input type="checkbox" id="chkFlight" checked> ✈️ Flight</label>
+          <label><input type="checkbox" id="chkHotel" checked> 🏨 Hotel</label>
+          <label><input type="checkbox" id="chkTransfer" checked> 🚕 Transfer</label>
+          <label><input type="checkbox" id="chkLocalTransport" checked> 🚌 Local transport</label>
+          <label><input type="checkbox" id="chkMealPlan" checked> 🍽️ Meals</label>
+          <label><input type="checkbox" id="chkVisa" checked> 📄 Visa help</label>
+        </div>
+        <div class="input-group"><label><i class="fas fa-ambulance"></i> Airport ambulance or doctor?</label>
+          <select id="airportMedical"><option value="no">No</option><option value="ambulance">Ambulance only (+$150)</option><option value="doctor">Doctor + ambulance (+$300)</option></select>
+        </div>
+        <div class="input-group"><label>Special requests</label><textarea id="specialReq" rows="2"></textarea></div>
+      </div>
+
+      <!-- Column 3: Emergency, Legal & Payment -->
+      <div class="form-section">
+        <h3><i class="fas fa-gavel"></i> Legal & Emergency</h3>
+        <div class="input-group"><label>Emergency contact (name & relation)</label><input id="emergencyContact"></div>
+        <div class="input-group"><label>Emergency phone</label><input id="emergencyPhone"></div>
+        <div id="deathProcedureText" class="legal-text"><strong>⚠️ Death & liability terms</strong><br><span id="deathLiabilityText">Loading...</span></div>
+        <div class="input-group"><label><input type="checkbox" id="acceptTerms"> I have read and agree to the above terms</label></div>
+        <div class="input-group"><label>Payment method</label>
+          <select id="paymentMethod"><option value="paypal">PayPal (Credit/Debit)</option><option value="bank">Direct Bank Transfer</option></select>
+        </div>
+        <div id="bankDetailsContainer" style="display:none;" class="bank-details"><strong>Bank Transfer Details:</strong><br><span id="bankDetailsText">Loading...</span></div>
+      </div>
+    </div>
+
+    <div class="price-panel">
+      <div class="total-price"><span>Total (USD)</span> <span id="totalPriceUSD">0.00</span></div>
+    </div>
+
+    <div id="paypalAlert" class="alert-message" style="display:none;"></div>
+    <div id="paypal-button-container" class="paypal-button-container"></div>
+    <div id="bank-transfer-container" class="bank-transfer-container" style="display:none;">
+      <button id="manualPaymentBtn" style="background:#1C4E3F; color:white; padding:12px; border-radius:60px; width:100%;">📄 Confirm Bank Transfer (Manual)</button>
+      <p style="font-size:0.7rem;">After transfer, email proof. Team confirms within 24h.</p>
+    </div>
+
+    <div id="confirmationBlock" class="confirmation-card">
+      <i class="fas fa-check-circle" style="color:#009E6B;"></i> <strong>Booking saved!</strong>
+      <div id="bookingSummary"></div>
+      <button id="printBtn" class="print-btn"><i class="fas fa-print"></i> Print Summary</button>
+    </div>
+  </div>
+  <div class="admin-link"><a href="admin.html"><i class="fas fa-lock"></i> Admin Login</a></div>
   <footer>© 2026 Ceylon MediConnect. Developed by Pesala Jayawardene</footer>
 </div>
 
 <script>
-  const ADMIN_PASSWORD = "admin123";
-  let bookings = [];
-  
-  // Pricing defaults + extended fields
+  // Default pricing & config (if nothing in localStorage)
   const defaultPricing = { baseAdminFee:450, flightEconomy:600, flightBusiness:1350, hotelStandard:70, hotelDeluxe:140, hotelLuxury:260, companionExtraHotel:35, transferFlat:95, dailyLocalTransport:25, mealPlanPerPersonPerDay:32, visaAssistance:70, companionHandling:80, airportAmbulanceFee:150, airportDoctorFee:300 };
-  const defaultLegal = { deathProcedure: "In the unfortunate event of death, the patient's next of kin will be notified immediately. Repatriation of mortal remains will be arranged by Ceylon MediConnect in coordination with the respective embassy. All costs related to embalming, legal formalities, air freight, and escort will be borne by the patient's family or insurance. The hospital and Ceylon MediConnect disclaim any liability beyond standard medical care.", costLiability: "All medical expenses, emergency interventions, and repatriation costs are solely the responsibility of the patient or their insurance provider. The door-to-door package covers only pre-agreed travel and accommodation services. Any additional unforeseen costs (extra nights, ICU, special medications) will be billed separately." };
+  const defaultLegal = { deathProcedure: "In case of death, next of kin notified. Repatriation arranged by Ceylon MediConnect at family's expense. All costs borne by patient's family or insurance.", costLiability: "Medical and repatriation costs are patient's responsibility. Package covers only pre-agreed travel/accommodation." };
   const defaultBank = { accountName: "Ceylon MediConnect (Pvt) Ltd", bankName: "Commercial Bank of Ceylon", accountNumber: "123-456-7890", swiftCode: "CCEYLKLX", currency: "USD" };
-  
-  function loadPricingForm() {
-    let pricing = JSON.parse(localStorage.getItem('ceylonPricing') || JSON.stringify(defaultPricing));
-    const container = document.getElementById('pricingForm');
+
+  let pricing = { ...defaultPricing };
+  let legalConfig = { ...defaultLegal };
+  let bankDetails = { ...defaultBank };
+
+  function loadConfigs() {
+    const savedPricing = localStorage.getItem('ceylonPricing');
+    if (savedPricing) pricing = { ...pricing, ...JSON.parse(savedPricing) };
+    const savedLegal = localStorage.getItem('ceylonLegal');
+    if (savedLegal) legalConfig = { ...legalConfig, ...JSON.parse(savedLegal) };
+    const savedBank = localStorage.getItem('ceylonBank');
+    if (savedBank) bankDetails = { ...bankDetails, ...JSON.parse(savedBank) };
+    document.getElementById('deathLiabilityText').innerHTML = `<strong>Death procedure:</strong> ${legalConfig.deathProcedure}<br><br><strong>Cost liability:</strong> ${legalConfig.costLiability}`;
+    document.getElementById('bankDetailsText').innerHTML = `Bank: ${bankDetails.bankName}<br>Account: ${bankDetails.accountName}<br>Number: ${bankDetails.accountNumber}<br>SWIFT: ${bankDetails.swiftCode}<br>Currency: ${bankDetails.currency}`;
+  }
+  loadConfigs();
+
+  function calculateNights() {
+    const start = new Date(document.getElementById('arrivalDate').value);
+    const end = new Date(document.getElementById('departureDate').value);
+    if (isNaN(start) || isNaN(end) || start >= end) return 0;
+    return Math.ceil((end - start) / (1000*60*60*24));
+  }
+
+  function updatePrice() {
+    let total = pricing.baseAdminFee;
+    const nights = calculateNights();
+    const companions = parseInt(document.getElementById('companions').value) || 0;
+    if (document.getElementById('chkFlight').checked) {
+      const flightCost = document.getElementById('flightClass').value === 'economy' ? pricing.flightEconomy : pricing.flightBusiness;
+      total += flightCost * (1 + companions);
+    }
+    if (document.getElementById('chkHotel').checked && nights > 0) {
+      let hotelRate = pricing.hotelStandard;
+      const tier = document.getElementById('hotelTier').value;
+      if (tier === 'deluxe') hotelRate = pricing.hotelDeluxe;
+      if (tier === 'luxury') hotelRate = pricing.hotelLuxury;
+      total += hotelRate * nights + pricing.companionExtraHotel * companions * nights;
+    }
+    if (document.getElementById('chkTransfer').checked) total += pricing.transferFlat;
+    if (document.getElementById('chkLocalTransport').checked) total += pricing.dailyLocalTransport * (nights + 1);
+    if (document.getElementById('chkMealPlan').checked) total += pricing.mealPlanPerPersonPerDay * (1 + companions) * (nights + 1);
+    if (document.getElementById('chkVisa').checked) total += pricing.visaAssistance;
+    total += pricing.companionHandling * companions;
+    const airportService = document.getElementById('airportMedical').value;
+    if (airportService === 'ambulance') total += pricing.airportAmbulanceFee;
+    if (airportService === 'doctor') total += pricing.airportDoctorFee;
+    document.getElementById('totalPriceUSD').innerText = total.toFixed(2);
+    return total;
+  }
+
+  function validateForm() {
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const diag = document.getElementById('diagnosis').value.trim();
+    const treatment = document.getElementById('treatmentReq').value.trim();
+    const arrival = document.getElementById('arrivalDate').value;
+    const departure = document.getElementById('departureDate').value;
+    const terms = document.getElementById('acceptTerms').checked;
+    if (!name || !email || !diag || !treatment || !arrival || !departure) {
+      alert("Please fill all required fields (*).");
+      return false;
+    }
+    if (new Date(arrival) >= new Date(departure)) {
+      alert("Departure date must be after arrival date.");
+      return false;
+    }
+    if (!terms) {
+      alert("You must accept the death procedure & cost liability terms.");
+      return false;
+    }
+    return true;
+  }
+
+  function gatherBookingData() {
+    return {
+      id: 'BK-' + Date.now(),
+      timestamp: new Date().toISOString(),
+      patient: {
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        diagnosis: document.getElementById('diagnosis').value,
+        treatment: document.getElementById('treatmentReq').value,
+        insuranceProvider: document.getElementById('insuranceProvider').value,
+        insurancePolicy: document.getElementById('insurancePolicy').value
+      },
+      travel: {
+        hospital: document.getElementById('hospital').value,
+        arrivalDate: document.getElementById('arrivalDate').value,
+        departureDate: document.getElementById('departureDate').value,
+        companions: document.getElementById('companions').value,
+        flightClass: document.getElementById('flightClass').value,
+        hotelTier: document.getElementById('hotelTier').value,
+        services: {
+          flight: document.getElementById('chkFlight').checked,
+          hotel: document.getElementById('chkHotel').checked,
+          transfer: document.getElementById('chkTransfer').checked,
+          localTransport: document.getElementById('chkLocalTransport').checked,
+          mealPlan: document.getElementById('chkMealPlan').checked,
+          visa: document.getElementById('chkVisa').checked
+        },
+        airportMedical: document.getElementById('airportMedical').value
+      },
+      emergencyContact: document.getElementById('emergencyContact').value,
+      totalPaidUSD: updatePrice(),
+      paymentMethod: document.getElementById('paymentMethod').value,
+      status: "pending"
+    };
+  }
+
+  function saveBookingAndConfirm(paymentRef) {
+    if (window.alreadySaved) return;
+    window.alreadySaved = true;
+    const booking = gatherBookingData();
+    let bookings = JSON.parse(localStorage.getItem('medicalBookings') || '[]');
+    bookings.push(booking);
+    localStorage.setItem('medicalBookings', JSON.stringify(bookings));
+    document.getElementById('confirmationBlock').style.display = 'block';
+    document.getElementById('bookingSummary').innerHTML = `Reservation: ${booking.id}<br>Name: ${booking.patient.fullName}<br>Total: $${booking.totalPaidUSD}<br>Payment: ${booking.paymentMethod === 'paypal' ? 'PayPal' : 'Bank Transfer (pending verification)'}<br>Status: Pending confirmation`;
+    document.getElementById('paypal-button-container').style.display = 'none';
+    document.getElementById('bank-transfer-container').style.display = 'none';
+    document.getElementById('printBtn').onclick = () => window.print();
+  }
+
+  function renderPayPal() {
+    if (document.getElementById('paymentMethod').value !== 'paypal') return;
+    const container = document.getElementById('paypal-button-container');
     container.innerHTML = '';
-    for(let key in defaultPricing) {
-      let div = document.createElement('div'); div.className = 'price-item';
-      div.innerHTML = `<label>${key.replace(/([A-Z])/g,' $1')}</label><input type="number" id="price_${key}" value="${pricing[key]}" step="5">`;
-      container.appendChild(div);
+    if (window.paypal && window.paypal.Buttons) {
+      window.paypal.Buttons({
+        createOrder: (data, actions) => {
+          if (!validateForm()) return actions.reject();
+          return actions.order.create({ purchase_units: [{ amount: { value: updatePrice().toFixed(2), currency_code: "USD" } }] });
+        },
+        onApprove: (data, actions) => actions.order.capture().then(details => saveBookingAndConfirm(details.id)),
+        onError: () => alert("PayPal error")
+      }).render('#paypal-button-container');
     }
   }
-  function savePricing() {
-    let updated = {};
-    for(let key in defaultPricing) updated[key] = parseFloat(document.getElementById(`price_${key}`).value);
-    localStorage.setItem('ceylonPricing', JSON.stringify(updated));
-    document.getElementById('pricingMsg').innerText = '✓ Saved';
-    setTimeout(()=>document.getElementById('pricingMsg').innerText='',1500);
+
+  function togglePaymentMethod() {
+    const method = document.getElementById('paymentMethod').value;
+    document.getElementById('paypal-button-container').style.display = method === 'paypal' ? 'block' : 'none';
+    document.getElementById('bank-transfer-container').style.display = method === 'bank' ? 'block' : 'none';
+    if (method === 'paypal') renderPayPal();
   }
-  function loadLegalForm() {
-    let legal = JSON.parse(localStorage.getItem('ceylonLegal') || JSON.stringify(defaultLegal));
-    document.getElementById('deathProcedure').value = legal.deathProcedure;
-    document.getElementById('costLiability').value = legal.costLiability;
-  }
-  function saveLegal() {
-    let legal = { deathProcedure: document.getElementById('deathProcedure').value, costLiability: document.getElementById('costLiability').value };
-    localStorage.setItem('ceylonLegal', JSON.stringify(legal));
-    document.getElementById('legalMsg').innerText = '✓ Legal terms saved';
-    setTimeout(()=>document.getElementById('legalMsg').innerText='',1500);
-  }
-  function loadBankForm() {
-    let bank = JSON.parse(localStorage.getItem('ceylonBank') || JSON.stringify(defaultBank));
-    document.getElementById('bankAccountName').value = bank.accountName;
-    document.getElementById('bankName').value = bank.bankName;
-    document.getElementById('bankAccountNumber').value = bank.accountNumber;
-    document.getElementById('bankSwift').value = bank.swiftCode;
-    document.getElementById('bankCurrency').value = bank.currency;
-  }
-  function saveBank() {
-    let bank = { accountName: document.getElementById('bankAccountName').value, bankName: document.getElementById('bankName').value, accountNumber: document.getElementById('bankAccountNumber').value, swiftCode: document.getElementById('bankSwift').value, currency: document.getElementById('bankCurrency').value };
-    localStorage.setItem('ceylonBank', JSON.stringify(bank));
-    document.getElementById('bankMsg').innerText = '✓ Bank details saved';
-    setTimeout(()=>document.getElementById('bankMsg').innerText='',1500);
-  }
-  
-  // Booking management
-  function loadBookings() { let stored = localStorage.getItem('medicalBookings'); bookings = stored ? JSON.parse(stored) : []; renderBookings(); }
-  function renderBookings() { /* same as before, but with airportMedical and insurance fields optional display */ let tbody=document.getElementById('bookingsTbody'); tbody.innerHTML=''; let pending=0,confirmed=0; bookings.forEach((b,idx)=>{ if(b.status==='pending') pending++; if(b.status==='confirmed') confirmed++; let row=tbody.insertRow(); row.innerHTML=`<td>${b.id}</td><td>${b.patient?.fullName||''}</td><td>${b.patient?.email||''}</td><td>${(b.patient?.treatment||'').substring(0,30)}</td><td>${b.travel?.hospital||''}</td><td>$${b.totalPaidUSD||0}</td><td><span class="status-badge status-${b.status==='confirmed'?'confirmed':'pending'}">${b.status.toUpperCase()}</span></td><td>${b.status==='pending'?`<button class="confirm-btn" data-idx="${idx}">Confirm</button>`:'✔️'}</td>`; }); document.getElementById('totalCount').innerText=bookings.length; document.getElementById('pendingCount').innerText=pending; document.getElementById('confirmedCount').innerText=confirmed; document.querySelectorAll('.confirm-btn').forEach(btn=>btn.addEventListener('click',()=>{ let idx=btn.dataset.idx; if(bookings[idx]){ bookings[idx].status='confirmed'; localStorage.setItem('medicalBookings',JSON.stringify(bookings)); renderBookings(); } })); }
-  function exportCSV() { let rows=[["ID","Patient","Email","Treatment","Hospital","Arrival","Departure","Total","Status","Insurance","Airport Medical"]]; bookings.forEach(b=>{ rows.push([b.id, b.patient?.fullName, b.patient?.email, b.patient?.treatment, b.travel?.hospital, b.travel?.arrivalDate, b.travel?.departureDate, b.totalPaidUSD, b.status, `${b.patient?.insuranceProvider||''} ${b.patient?.insurancePolicy||''}`, b.travel?.airportMedical]); }); let csv=rows.map(r=>r.join(",")).join("\n"); let blob=new Blob([csv],{type:"text/csv"}); let a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="bookings.csv"; a.click(); }
-  
-  // Login
-  document.getElementById('loginBtn').addEventListener('click',()=>{ if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){ document.getElementById('loginDiv').classList.add('hidden'); document.getElementById('adminPanel').classList.remove('hidden'); loadPricingForm(); loadLegalForm(); loadBankForm(); loadBookings(); } else alert("Wrong password"); });
-  document.getElementById('logoutBtnAdmin').addEventListener('click',()=>{ document.getElementById('loginDiv').classList.remove('hidden'); document.getElementById('adminPanel').classList.add('hidden'); });
-  document.getElementById('exportCsvBtn').addEventListener('click',exportCSV);
-  document.getElementById('savePricingBtn').addEventListener('click',savePricing);
-  document.getElementById('saveLegalBtn').addEventListener('click',saveLegal);
-  document.getElementById('saveBankBtn').addEventListener('click',saveBank);
+
+  // Event listeners
+  document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('change', updatePrice));
+  document.getElementById('arrivalDate').addEventListener('change', updatePrice);
+  document.getElementById('departureDate').addEventListener('change', updatePrice);
+  document.getElementById('paymentMethod').addEventListener('change', togglePaymentMethod);
+  document.getElementById('manualPaymentBtn').addEventListener('click', () => { if (validateForm()) saveBookingAndConfirm('MANUAL_BANK'); else alert("Please fill required fields and accept terms."); });
+
+  updatePrice();
+  togglePaymentMethod();
+  // Refresh configs if admin updates them in another tab
+  window.addEventListener('storage', () => { loadConfigs(); updatePrice(); renderPayPal(); });
 </script>
 </body>
 </html>
