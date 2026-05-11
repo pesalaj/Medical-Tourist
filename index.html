@@ -49,6 +49,8 @@
     .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index:1000; }
     .modal-content { background: white; max-width: 500px; padding: 2rem; border-radius: 2rem; text-align: center; }
     .info-badge { background: #eaf6f0; padding: 0.8rem; border-radius: 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
+    .picture-left { margin-top: 1rem; text-align: left; }
+    .picture-left img { max-width: 100%; border-radius: 1rem; max-height: 180px; width: auto; }
     @media (max-width:780px) { .tab-content { padding: 1rem; } }
   </style>
 </head>
@@ -136,6 +138,16 @@
           <div class="input-group"><label>Companion contact phone</label><input id="companionPhone" placeholder="Emergency number"></div>
           <div class="input-group"><label><input type="checkbox" id="noCompanion"> I have no companion – I agree to pay $7,000 refundable deposit</label></div>
         </div>
+
+        <!-- Column 3: Other notes + PICTURE (bottom left) -->
+        <div class="form-section">
+          <h3><i class="fas fa-pen-alt"></i> Additional notes</h3>
+          <div class="input-group"><label>Any other important information</label><textarea id="generalNotes" rows="3" placeholder="E.g., Allergies, prior surgeries, special requests not listed"></textarea></div>
+          <div class="picture-left">
+            <img src="https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Medical care illustration">
+            <p style="font-size:0.7rem; margin-top:5px;">Compassionate care, every step of the way</p>
+          </div>
+        </div>
       </div>
 
       <!-- Registration panel with inline countdown -->
@@ -197,10 +209,6 @@
           <div class="input-group"><label>Description of additional charge</label><input id="extraChargeDesc" placeholder="E.g., Special wheelchair, extra medication"></div>
           <div class="input-group"><label>Amount (usd)</label><input type="number" id="extraChargeAmount" step="10" value="0" placeholder="0"></div>
           <div class="input-group"><label>Special requests (diet, mobility, etc.)</label><textarea id="specialReq" rows="3" placeholder="E.g., Wheelchair access, halal meals, oxygen concentrator"></textarea></div>
-          <div class="picture-placeholder" style="margin-top:1rem; text-align:center;">
-            <img src="https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Medical care illustration" style="max-width:100%; border-radius:1rem;">
-            <p style="font-size:0.7rem; margin-top:5px;">Compassionate care, every step of the way</p>
-          </div>
         </div>
       </div>
       <div class="footer-buttons"><button class="back-btn" onclick="goToTab(2)">← Back to payment</button></div>
@@ -483,6 +491,17 @@
     if (method === 'paypal') renderPayPal();
   }
 
+  // Tab navigation: attach click listeners to all tab buttons
+  function initTabs() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabId = btn.getAttribute('data-tab');
+        goToTab(parseInt(tabId.replace('tab','')));
+      });
+    });
+  }
+
   window.goToTab = function(tabNum) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -509,6 +528,7 @@
 
   updatePriceAndBreakdown();
   togglePaymentMethod();
+  initTabs();
   window.addEventListener('storage', () => { loadConfigs(); updatePriceAndBreakdown(); renderPayPal(); });
 </script>
 </body>
